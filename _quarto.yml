@@ -1,13 +1,21 @@
 project:
   type: website
   output-dir: docs
+  
 website:
   title: "Project 1: website"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - href: about.qmd
+        text: About
+      - text: "Data Viz"
+        menu: 
+         - text: "Lisa's Vegetable Garden"
+           href: Lisa Vegetable garden.html
+         - text: "Carbon Emissions"
+           href: Carbon Emissions.html
 
 format:
   html:

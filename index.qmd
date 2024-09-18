@@ -2,10 +2,26 @@
 title: "Project 1: website"
 ---
 
-This is a Quarto website.
+Welcome to my website! Click the links down below for more information.
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
 
-```{r}
-1 + 1
-```
+---
+title: "Ian's Project Website"
+image: Picture.jpeg
+toc: false
+about: 
+  template: jolla
+  image-shape: round
+  image-width: 17em
+  links:
+    - text: LinkedIn
+      href: https://www.linkedin.com/in/ian-palmer-902704293/
+    - text: GitHub
+      href: https://github.com/iaph2023
+    - text: Email
+      href: iaph2023@mymail.pomona.edu
+---
+
+Biography: I am a sophomore at Pomona College intending to double major in Economics and Math, while also pursuing a minor in Data Science. I am also on the Pomona College swim team. I am originally from the San Francisco East Bay Area. 
+   
+

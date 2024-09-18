@@ -4,13 +4,27 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "I am a sophomore at Pomona College intending to double major in Economics and Math, while also pursuing a minor in Data Science. I am also on the Pomona College swim team. I have been working on my data analysis skills and learning R. I have worked on several TidyTuesday datasets to create visuals.\nCheck out the Data Viz tab on the top left to check out some interesting data visuals."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Project 1: website",
+    "title": "Ian’s Project Website",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "Welcome to my website! Click the links down below for more information.\nBiography: I am a sophomore at Pomona College intending to double major in Economics and Math, while also pursuing a minor in Data Science. I am also on the Pomona College swim team. I am originally from the San Francisco East Bay Area."
+  },
+  {
+    "objectID": "Lisa Vegetable garden.html",
+    "href": "Lisa Vegetable garden.html",
+    "title": "Lisa Vegetable Garden",
+    "section": "",
+    "text": "tuesdata &lt;- tidytuesdayR::tt_load(2024, week = 22)\n\nharvest_2020 &lt;- tuesdata$harvest_2020\nharvest_2021 &lt;- tuesdata$harvest_2021\nplanting_2020 &lt;- tuesdata$planting_2020\nplanting_2021 &lt;- tuesdata$planting_2021\nspending_2020 &lt;- tuesdata$spending_2020\nspending_2021 &lt;- tuesdata$spending_2021\n\nBelow you can see my code and data visualization of Lisa’s Vegetable Garden. The graph represents the average weight of vegetables harvested during each month of the 2020 harvest.\n\nlibrary(tidyverse)\n\n\nharvest_2020_avg &lt;- harvest_2020 |&gt;\n  mutate(month = as.Date(format(as.Date(date), \"%Y-%m-01\"))) |&gt;  # Extract month and convert to Date format\n  group_by(month) |&gt;\n  summarize(avg_weight = mean(weight, na.rm = TRUE))\n\nggplot(harvest_2020_avg, aes(x = month, y = avg_weight)) +\n  geom_line() +\n  geom_point() +\n  labs(title = \"Average Weight of Vegetables Harvested per Month in 2020 Season\",\n       x = \"Month\",\n       y = \"Average Weight (grams)\")"
+  },
+  {
+    "objectID": "Carbon Emissions.html",
+    "href": "Carbon Emissions.html",
+    "title": "Carbon Emissions",
+    "section": "",
+    "text": "tuesdata &lt;- tidytuesdayR::tt_load(2024, week = 21)\n\nemissions &lt;- tuesdata$emissions\n\nBelow you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.\n\nlibrary(tidyverse)\n\n\nsummary_data &lt;- emissions |&gt;\n  select(year, total_emissions_MtCO2e) |&gt;\n  group_by(year) |&gt;\n  summarize(ave_emissions = mean(total_emissions_MtCO2e))\n\nggplot(summary_data, aes(x = year, y = ave_emissions)) +\n  geom_point() +\n  geom_smooth(se = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Average Carbon Emissions\",\n    title = \"Total Carbon Emissions per Year\"\n  )\n\n`geom_smooth()` using method = 'loess' and formula = 'y ~ x'"
   }
 ]

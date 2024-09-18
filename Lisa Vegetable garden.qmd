@@ -1,0 +1,40 @@
+---
+title: "Lisa Vegetable Garden"
+description: |
+  Analysis of Lisa Vegetable Garden data from TidyTuesday
+author: Ian Palmer
+date: September 18, 2024
+format: html
+---
+```{r, message=FALSE, warning=FALSE}
+
+tuesdata <- tidytuesdayR::tt_load(2024, week = 22)
+
+harvest_2020 <- tuesdata$harvest_2020
+harvest_2021 <- tuesdata$harvest_2021
+planting_2020 <- tuesdata$planting_2020
+planting_2021 <- tuesdata$planting_2021
+spending_2020 <- tuesdata$spending_2020
+spending_2021 <- tuesdata$spending_2021
+```
+
+Below you can see my code and data visualization of Lisa's Vegetable Garden. The graph represents the average weight of vegetables harvested during each month of the 2020 harvest. 
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r}
+harvest_2020_avg <- harvest_2020 |>
+  mutate(month = as.Date(format(as.Date(date), "%Y-%m-01"))) |>  # Extract month and convert to Date format
+  group_by(month) |>
+  summarize(avg_weight = mean(weight, na.rm = TRUE))
+
+ggplot(harvest_2020_avg, aes(x = month, y = avg_weight)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Average Weight of Vegetables Harvested per Month in 2020 Season",
+       x = "Month",
+       y = "Average Weight (grams)") 
+  
+```

@@ -1,0 +1,39 @@
+---
+title: "Carbon Emissions"
+description: |
+  Analysis of Carbon Emissions data from TidyTuesday
+author: Ian Palmer
+date: September 18, 2024
+format: html
+---
+
+```{r, message=FALSE, warning=FALSE}
+tuesdata <- tidytuesdayR::tt_load(2024, week = 21)
+
+emissions <- tuesdata$emissions
+```
+
+
+Below you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.
+
+
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r}
+summary_data <- emissions |>
+  select(year, total_emissions_MtCO2e) |>
+  group_by(year) |>
+  summarize(ave_emissions = mean(total_emissions_MtCO2e))
+
+ggplot(summary_data, aes(x = year, y = ave_emissions)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  labs(
+    x = "Year",
+    y = "Average Carbon Emissions",
+    title = "Total Carbon Emissions per Year"
+  )
+```
