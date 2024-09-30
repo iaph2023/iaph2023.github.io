@@ -4,15 +4,11 @@ author: "Ian Palmer"
 date: 10/02/24
 ---
 
-
 test here
-
-
 
 ```{r}
 library(tidyverse)
 ```
-
 
 ```{r, message=FALSE, warning=FALSE}
 
@@ -39,6 +35,3 @@ netflix_type_count
 #  count(release_year)
 #netflix_year_
 ```
-
-
-
