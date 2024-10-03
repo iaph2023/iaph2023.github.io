@@ -4,9 +4,8 @@ title: "Project 1: website"
 
 Welcome to my website! Click the links down below for more information.
 
-
 ---
-title: "Ian's Project Website"
+title: "Ian's Website"
 image: Picture.jpeg
 toc: false
 about: 
@@ -22,6 +21,4 @@ about:
       href: iaph2023@mymail.pomona.edu
 ---
 
-Biography: I am a sophomore at Pomona College intending to double major in Economics and Math, while also pursuing a minor in Data Science. I am also on the Pomona College swim team. I am originally from the San Francisco East Bay Area. 
-   
-
+Biography: I am a sophomore at Pomona College intending to double major in Economics and Math, while also pursuing a minor in Data Science. I am also on the Pomona College swim team. I am originally from the San Francisco East Bay Area.

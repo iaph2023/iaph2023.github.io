@@ -5,7 +5,11 @@ description: |
 author: Ian Palmer
 date: September 18, 2024
 format: html
+execute: 
+  warning: false
+  message: false
 ---
+
 ```{r, message=FALSE, warning=FALSE}
 
 tuesdata <- tidytuesdayR::tt_load(2024, week = 22)
@@ -18,7 +22,7 @@ spending_2020 <- tuesdata$spending_2020
 spending_2021 <- tuesdata$spending_2021
 ```
 
-Below you can see my code and data visualization of Lisa's Vegetable Garden. The graph represents the average weight of vegetables harvested during each month of the 2020 harvest. 
+Below you can see my code and data visualization of Lisa's Vegetable Garden. The graph represents the average weight of vegetables harvested during each month of the 2020 harvest.
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)

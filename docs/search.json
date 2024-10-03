@@ -9,7 +9,7 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Ian’s Project Website",
+    "title": "Ian’s Website",
     "section": "",
     "text": "Welcome to my website! Click the links down below for more information.\nBiography: I am a sophomore at Pomona College intending to double major in Economics and Math, while also pursuing a minor in Data Science. I am also on the Pomona College swim team. I am originally from the San Francisco East Bay Area."
   },
@@ -25,7 +25,7 @@
     "href": "Carbon Emissions.html",
     "title": "Carbon Emissions",
     "section": "",
-    "text": "tuesdata &lt;- tidytuesdayR::tt_load(2024, week = 21)\n\nemissions &lt;- tuesdata$emissions\n\nBelow you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.\n\nlibrary(tidyverse)\n\n\nsummary_data &lt;- emissions |&gt;\n  select(year, total_emissions_MtCO2e) |&gt;\n  group_by(year) |&gt;\n  summarize(ave_emissions = mean(total_emissions_MtCO2e))\n\nggplot(summary_data, aes(x = year, y = ave_emissions)) +\n  geom_point() +\n  geom_smooth(se = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Average Carbon Emissions\",\n    title = \"Total Carbon Emissions per Year\"\n  )\n\n`geom_smooth()` using method = 'loess' and formula = 'y ~ x'"
+    "text": "tuesdata &lt;- tidytuesdayR::tt_load(2024, week = 21)\n\nemissions &lt;- tuesdata$emissions\n\nBelow you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.\n\nlibrary(tidyverse)\n\n\nsummary_data &lt;- emissions |&gt;\n  select(year, total_emissions_MtCO2e) |&gt;\n  group_by(year) |&gt;\n  summarize(ave_emissions = mean(total_emissions_MtCO2e))\n\nggplot(summary_data, aes(x = year, y = ave_emissions)) +\n  geom_point() +\n  geom_smooth(se = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Average Carbon Emissions\",\n    title = \"Total Carbon Emissions per Year\"\n  )"
   },
   {
     "objectID": "Mini Project 2.html",

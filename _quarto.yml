@@ -3,7 +3,7 @@ project:
   output-dir: docs
   
 website:
-  title: "Project 1: website"
+  title: "iaph2023.github.io"
   navbar:
     left:
       - href: index.qmd
@@ -16,6 +16,8 @@ website:
            href: Lisa Vegetable garden.html
          - text: "Carbon Emissions"
            href: Carbon Emissions.html
+      - text: "Project 2"
+        href: "Mini Project 2.qmd"
 
 format:
   html:

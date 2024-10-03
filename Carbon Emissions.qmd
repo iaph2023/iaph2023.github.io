@@ -5,6 +5,9 @@ description: |
 author: Ian Palmer
 date: September 18, 2024
 format: html
+execute: 
+  warning: false
+  message: false
 ---
 
 ```{r, message=FALSE, warning=FALSE}
@@ -13,10 +16,7 @@ tuesdata <- tidytuesdayR::tt_load(2024, week = 21)
 emissions <- tuesdata$emissions
 ```
 
-
 Below you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.
-
-
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)

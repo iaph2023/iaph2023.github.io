@@ -4,4 +4,4 @@ title: "About"
 
 I am a sophomore at Pomona College intending to double major in Economics and Math, while also pursuing a minor in Data Science. I am also on the Pomona College swim team. I have been working on my data analysis skills and learning R. I have worked on several TidyTuesday datasets to create visuals.
 
-Check out the Data Viz tab on the top left to check out some interesting data visuals. 
+Check out the Data Viz tab on the top left to check out some interesting data visuals.
