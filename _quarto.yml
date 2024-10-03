@@ -16,8 +16,8 @@ website:
            href: Lisa Vegetable garden.html
          - text: "Carbon Emissions"
            href: Carbon Emissions.html
-      - text: "Project 2"
-        href: "Mini Project 2.qmd"
+         - text: "Project 2"
+           href: Mini Project 2.html
 
 format:
   html:
