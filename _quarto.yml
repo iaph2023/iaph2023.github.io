@@ -18,6 +18,8 @@ website:
            href: Carbon Emissions.html
          - text: "Project 2"
            href: Mini Project 2 copy.html
+         - text: "Project 3"
+           href: MiniProject3.html
 
 format:
   html:
