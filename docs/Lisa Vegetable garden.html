@@ -150,6 +150,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./Mini Project 2 copy.html">
  <span class="dropdown-text">Project 2</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./MiniProject3.html">
+ <span class="dropdown-text">Project 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Project4_SQL.html">
+ <span class="dropdown-text">Project 4</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -206,39 +214,81 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="dv">2024</span>, <span class="at">week =</span> <span class="dv">22</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>harvest_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>harvest_2020</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>harvest_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>harvest_2021</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>planting_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>planting_2020</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>planting_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>planting_2021</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>spending_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>spending_2020</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>spending_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>spending_2021</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This project showcases my first time using the introductory tidyverse data visualization skills that I learned in my data science course. In this section I looked at the Lisa Vegetable Garden data set from tidytuesday. I aimed to explore the data set and create a visualization using the data.</p>
+<p>The dataset used in this project, <strong>Lisa’s Vegetable Garden</strong>, is sourced from <a href="https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-05-28/readme.md">Tidy Tuesday’s May 28, 2024 release</a>.</p>
+<p>The Lisa’s Vegetable Garden dataset contains detailed records of Lisa Lendway’s vegetable garden from the summers of 2020 and 2021. The data includes planting, harvesting, and spending details, offering insights into gardening practices and changes between the two years. Originally used in her Introduction to Data Science course at Macalester College, the dataset provides a hands-on way to explore data science concepts.</p>
+<p>Tidy Tuesday is a weekly R project encouraging data wrangling, visualization, and sharing insights with the #TidyTuesday community.</p>
+<p>Here is the dataset that I used:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="dv">2024</span>, <span class="at">week =</span> <span class="dv">22</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>harvest_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>harvest_2020</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>harvest_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>harvest_2021</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>planting_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>planting_2020</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>planting_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>planting_2021</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>spending_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>spending_2020</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>spending_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>spending_2021</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here is a quick glimpse of the data contained in the harvest_2020 dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(harvest_2020,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  vegetable variety          date       weight units
+  &lt;chr&gt;     &lt;chr&gt;            &lt;date&gt;      &lt;dbl&gt; &lt;chr&gt;
+1 lettuce   reseed           2020-06-06     20 grams
+2 radish    Garden Party Mix 2020-06-06     36 grams
+3 lettuce   reseed           2020-06-08     15 grams
+4 lettuce   reseed           2020-06-09     10 grams
+5 radish    Garden Party Mix 2020-06-11     67 grams</code></pre>
+</div>
+</div>
+<p>This code chuck creates a new data set called harvest_2020_avg which I use in my visualization later. I find the average harvest weight across all months in the 2020 harvest season.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new dataset with average harvest weight per month</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>harvest_2020_avg <span class="ot">&lt;-</span> harvest_2020 <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a new column 'month', extracting the year and month from the 'date' column</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">as.Date</span>(<span class="fu">format</span>(<span class="fu">as.Date</span>(date), <span class="st">"%Y-%m-01"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group the data by the 'month' column</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the average weight for each month, ignoring missing values (NA)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_weight =</span> <span class="fu">mean</span>(weight, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the resulting dataset</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>harvest_2020_avg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  month      avg_weight
+  &lt;date&gt;          &lt;dbl&gt;
+1 2020-06-01       78.8
+2 2020-07-01      219. 
+3 2020-08-01      473. 
+4 2020-09-01     1128. 
+5 2020-10-01      959. </code></pre>
+</div>
 </div>
 <p>Below you can see my code and data visualization of Lisa’s Vegetable Garden. The graph represents the average weight of vegetables harvested during each month of the 2020 harvest.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>harvest_2020_avg <span class="ot">&lt;-</span> harvest_2020 <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">as.Date</span>(<span class="fu">format</span>(<span class="fu">as.Date</span>(date), <span class="st">"%Y-%m-01"</span>))) <span class="sc">|&gt;</span>  <span class="co"># Extract month and convert to Date format</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_weight =</span> <span class="fu">mean</span>(weight, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(harvest_2020_avg, <span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> avg_weight)) <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Weight of Vegetables Harvested per Month in 2020 Season"</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Month"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Average Weight (grams)"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a line plot of average vegetable weights harvested per month</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(harvest_2020_avg, <span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> avg_weight)) <span class="sc">+</span>  <span class="co"># Set up ggplot with dataset and aesthetic mappings</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span>  <span class="co"># Add a line connecting the average weights for each month</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>  <span class="co"># Add points at each month's average weight for emphasis</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Average Weight of Vegetables Harvested per Month in 2020 Season"</span>,  <span class="co"># Set the plot title</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Month"</span>,  <span class="co"># Label for the x-axis (Month)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average Weight (grams)"</span>  <span class="co"># Label for the y-axis (Average Weight in grams)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Lisa-Vegetable-garden_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Lisa-Vegetable-garden_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" alt="This line graph shows the average weight of vegetables harvested per month during the 2020 season. The x-axis represents the months (June to October), and the y-axis represents the average weight of the harvest in grams. The trend line starts low in June, rises steadily through July and August, peaks in September, and then slightly declines in October. Each data point is marked with a dot connected by straight lines." width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>As we can see, the graph shows the average weight of vegetables harvested per month during the 2020 season. Harvest weights increased steadily from June, peaked in September, and then slightly declined in October, highlighting a clear seasonal trend in vegetable yields.</p>
 
 
 

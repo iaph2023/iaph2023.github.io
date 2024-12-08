@@ -150,6 +150,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./Mini Project 2 copy.html">
  <span class="dropdown-text">Project 2</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./MiniProject3.html">
+ <span class="dropdown-text">Project 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./Project4_SQL.html">
+ <span class="dropdown-text">Project 4</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -206,36 +214,77 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="dv">2024</span>, <span class="at">week =</span> <span class="dv">21</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>emissions <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>emissions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This project showcases my use of tidyverse data wrangling and visualization skills. In this section, I analyze the Carbon Emissions dataset from TidyTuesday to explore trends in emissions over time and create a visualization.</p>
+<p>The dataset used in this project, <strong>Carbon Emissions</strong>, is sourced from <a href="https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-05-21/readme.md">Tidy Tuesday’s May 21, 2024 release</a>.</p>
+<p>The Carbon Emissions dataset includes historical emissions data compiled by Carbon Majors. This database contains emissions data from 122 of the world’s largest fossil fuel and cement producers, spanning from 1854 to the present. It tracks both operational emissions and emissions resulting from the combustion of marketed products, offering valuable insights into global carbon trends.</p>
+<p>Tidy Tuesday is a weekly R project encouraging data exploration, visualization, and sharing insights with the #TidyTuesday community.</p>
+<p>Here is the data set that I used:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="dv">2024</span>, <span class="at">week =</span> <span class="dv">21</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>emissions <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>emissions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Below is a quick glimpse of the data contained in the emissions dataset:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(emissions, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 7
+   year parent_entity     parent_type commodity production_value production_unit
+  &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;       &lt;chr&gt;                &lt;dbl&gt; &lt;chr&gt;          
+1  1962 Abu Dhabi Nation… State-owne… Oil &amp; NGL            0.913 Million bbl/yr 
+2  1962 Abu Dhabi Nation… State-owne… Natural …            1.84  Bcf/yr         
+3  1963 Abu Dhabi Nation… State-owne… Oil &amp; NGL            1.83  Million bbl/yr 
+4  1963 Abu Dhabi Nation… State-owne… Natural …            4.42  Bcf/yr         
+5  1964 Abu Dhabi Nation… State-owne… Oil &amp; NGL            7.3   Million bbl/yr 
+# ℹ 1 more variable: total_emissions_MtCO2e &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>This code chunk creates a new dataset summarizing the average carbon emissions per year. I use this summary data to generate the visualization below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>summary_data <span class="ot">&lt;-</span> emissions <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, total_emissions_MtCO2e) <span class="sc">|&gt;</span>  <span class="co"># Select relevant columns</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span>  <span class="co"># Group by year</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_emissions =</span> <span class="fu">mean</span>(total_emissions_MtCO2e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))  <span class="co"># Calculate the average emissions, ignoring NAs</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>summary_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 169 × 2
+    year ave_emissions
+   &lt;dbl&gt;         &lt;dbl&gt;
+ 1  1854        0.0331
+ 2  1855        0.0430
+ 3  1856        0.0529
+ 4  1857        0.0615
+ 5  1858        0.0701
+ 6  1859        0.0787
+ 7  1860        0.0873
+ 8  1861        0.0959
+ 9  1862        0.105 
+10  1863        0.113 
+# ℹ 159 more rows</code></pre>
+</div>
 </div>
 <p>Below you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>summary_data <span class="ot">&lt;-</span> emissions <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, total_emissions_MtCO2e) <span class="sc">|&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_emissions =</span> <span class="fu">mean</span>(total_emissions_MtCO2e))</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(summary_data, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> ave_emissions)) <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average Carbon Emissions"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Total Carbon Emissions per Year"</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(summary_data, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> ave_emissions)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>  <span class="co"># Add points for each year's emissions</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span>  <span class="co"># Add a smooth trend line without confidence intervals</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,  <span class="co"># Label for the x-axis</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average Carbon Emissions (MtCO2e)"</span>,  <span class="co"># Label for the y-axis</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Average Carbon Emissions per Year"</span>  <span class="co"># Set the plot title</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Carbon-Emissions_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Carbon-Emissions_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" alt="This scatter plot shows average carbon emissions per year from 1850 to the present day. The x-axis represents the year, while the y-axis represents the average carbon emissions in million tonnes of CO2 equivalent (MtCO2e). The data points are marked as black dots, and a blue smooth trend line highlights the overall upward trajectory of emissions, with a steep increase starting around the mid-20th century and continuing to rise in recent decades." width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>By analyzing this dataset, I gained insights into how carbon emissions have changed over time, reflecting industrialization and energy consumption patterns. This project complements my work with the Lisa’s Vegetable Garden dataset, demonstrating a broader application of data science skills to real-world datasets.</p>
 
 
 

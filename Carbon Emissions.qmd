@@ -11,29 +11,66 @@ execute:
 ---
 
 ```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+This project showcases my use of tidyverse data wrangling and visualization skills. In this section, I analyze the Carbon Emissions dataset from TidyTuesday to explore trends in emissions over time and create a visualization.
+
+The dataset used in this project, **Carbon Emissions**, is sourced from [Tidy Tuesday's May 21, 2024 release](https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-05-21/readme.md).
+
+The Carbon Emissions dataset includes historical emissions data compiled by Carbon Majors. This database contains emissions data from 122 of the world's largest fossil fuel and cement producers, spanning from 1854 to the present. It tracks both operational emissions and emissions resulting from the combustion of marketed products, offering valuable insights into global carbon trends.
+
+Tidy Tuesday is a weekly R project encouraging data exploration, visualization, and sharing insights with the #TidyTuesday community.
+
+
+Here is the data set that I used:
+```{r, message=FALSE, warning=FALSE}
 tuesdata <- tidytuesdayR::tt_load(2024, week = 21)
 
 emissions <- tuesdata$emissions
 ```
 
-Below you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.
 
-```{r, message=FALSE, warning=FALSE}
-library(tidyverse)
-```
+Below is a quick glimpse of the data contained in the emissions dataset:
 
 ```{r}
+head(emissions, 5)
+
+```
+
+This code chunk creates a new dataset summarizing the average carbon emissions per year. I use this summary data to generate the visualization below:
+
+```{r}
+
 summary_data <- emissions |>
-  select(year, total_emissions_MtCO2e) |>
-  group_by(year) |>
-  summarize(ave_emissions = mean(total_emissions_MtCO2e))
+  select(year, total_emissions_MtCO2e) |>  # Select relevant columns
+  group_by(year) |>  # Group by year
+  summarize(ave_emissions = mean(total_emissions_MtCO2e, na.rm = TRUE))  # Calculate the average emissions, ignoring NAs
+
+summary_data
+
+```
+
+
+
+
+
+Below you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.
+
+
+```{r, fig.alt= "This scatter plot shows average carbon emissions per year from 1850 to the present day. The x-axis represents the year, while the y-axis represents the average carbon emissions in million tonnes of CO2 equivalent (MtCO2e). The data points are marked as black dots, and a blue smooth trend line highlights the overall upward trajectory of emissions, with a steep increase starting around the mid-20th century and continuing to rise in recent decades."}
+
 
 ggplot(summary_data, aes(x = year, y = ave_emissions)) +
-  geom_point() +
-  geom_smooth(se = FALSE) +
+  geom_point() +  # Add points for each year's emissions
+  geom_smooth(se = FALSE) +  # Add a smooth trend line without confidence intervals
   labs(
-    x = "Year",
-    y = "Average Carbon Emissions",
-    title = "Total Carbon Emissions per Year"
+    x = "Year",  # Label for the x-axis
+    y = "Average Carbon Emissions (MtCO2e)",  # Label for the y-axis
+    title = "Average Carbon Emissions per Year"  # Set the plot title
   )
+
 ```
+
+By analyzing this dataset, I gained insights into how carbon emissions have changed over time, reflecting industrialization and energy consumption patterns. This project complements my work with the Lisa's Vegetable Garden dataset, demonstrating a broader application of data science skills to real-world datasets.

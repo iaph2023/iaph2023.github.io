@@ -17,14 +17,19 @@ There are two main goals of this project. First, to recreate Figure 1 from Voss 
 The SQL queries handle data filtering, aggregation, and JOIN operations to generate datasets ready for visualization in R. The analysis aims to demonstrate proficiency in both SQL for data wrangling and R for plotting.
 
 
-# Source
+# Sources
 
 This project uses data from the **Wideband Acoustic Immittance (WAI) Database** hosted by Smith College, which provides WAI ear measurements published in peer-reviewed articles. The data was accessed via SQL queries for analysis.
 
 The analysis reproduces **Figure 1** from the article:  
-**Voss, S. E., & Allen, J. B. (2020).** "Measurement and Analysis of Middle Ear Function in Humans."  
-*Hearing Research, 384*  
-Available at: [https://pmc.ncbi.nlm.nih.gov/articles/PMC7093226/](https://pmc.ncbi.nlm.nih.gov/articles/PMC7093226/).
+**Voss, Susan E. Ph.D. (2019).** *Resource Review.* *Ear and Hearing, 40*(6), p. 1481, November/December 2019.  
+[DOI: 10.1097/AUD.0000000000000790](https://doi.org/10.1097/AUD.0000000000000790)
+
+Addtionally, I will provide the sources for both the Abur 2014 and Hunter 2016 as I looked more in depth into their datasets:
+
+**Abur, D., Horton, N. J., & Voss, S. E. (2014).** Wideband acoustic immittance measures in normal-hearing adults: Test-retest reliability and effects of ear-canal pressurization. *Hearing Research, 316*, 23–31. [DOI Link](https://doi.org/10.1016/j.heares.2014.07.001)
+
+**Hunter, L. L., Monson, B. B., Prieve, B. A., & Fitzgerald, T. S. (2016).** NICU graduates and wideband absorbance: A comparison of normative data. *Hearing Research, 342*, 72–80. [DOI Link](https://doi.org/10.1016/j.heares.2016.08.007)
 
 
 ---
@@ -101,7 +106,9 @@ SELECT
 FROM Measurements
 JOIN PI_Info ON Measurements.Identifier = PI_Info.Identifier
 WHERE Measurements.Identifier IN ('Abur_2014', 'Feeney_207', 'Groon_2015', 'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006', 'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010', 'Werner_2010')
+  AND Measurements.Frequency >= 200  -- Apply frequency filter in SQL
 GROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortList, Measurements.Frequency;
+
 
 
 ```
@@ -109,16 +116,13 @@ GROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortL
 
 The resulting dataset was visualized in R to replicate the mean absorbance plot from Voss (2020):
 ```{r, fig.height=8, fig.width=8}
-data$Frequency <- as.numeric(data$Frequency)
-data <- data |>
-  filter(Frequency >= 200)
 
 ggplot(data, aes(x = Frequency, y = MeanAbsorbance, color = Legend_Label)) +
   geom_line(size = 0.8) +
   labs(
-    title = "Mean absorbance from publication's in WAI database",
+    title = "Mean Absorbance from Publications in WAI Database",
     x = "Frequency (Hz)",
-    y = "Mean Absorbance",
+    y = "Mean Absorbance"
   ) +
   theme_minimal() +
   scale_x_continuous(
@@ -130,7 +134,12 @@ ggplot(data, aes(x = Frequency, y = MeanAbsorbance, color = Legend_Label)) +
   scale_y_continuous(
     limits = c(0, 1),
     expand = c(0, 0)
+  ) +
+  theme(
+    legend.position = c(0.2, 0.8),  # Place legend inside the plot
+    legend.title = element_blank()  # Remove legend title
   )
+
 ```
 **Description:**
 
@@ -151,6 +160,7 @@ FROM Subjects;
 
 # Study 1: Abur_2014
 
+
 I began by analyzing the Abur_2014 study for differences in absorbance by age category. I used the follwoing queary to create an output variable for this study called "age_data_Abur_2014"
 ```{sql, connection=con_wai, output.var="age_data_Abur_2014"}
 SELECT 
@@ -159,8 +169,10 @@ SELECT
   AVG(Measurements.Absorbance) AS MeanAbsorbance
 FROM Measurements
 JOIN Subjects ON Measurements.SubjectNumber = Subjects.SubjectNumber
-WHERE Measurements.Identifier = 'Abur_2014' -- Adjust based on study of interst
+WHERE Measurements.Identifier = 'Abur_2014' 
+  AND Measurements.Frequency >= 200
 GROUP BY Subjects.AgeCategoryFirstMeasurement, Measurements.Frequency;
+
 
 ```
 
@@ -195,8 +207,21 @@ ggplot(age_data_Abur_2014, aes(x = Frequency, y = MeanAbsorbance, color = AgeCat
 ```
 **Description:**
 
-This plot illustrates how mean absorbance varies across frequencies for different age categories in the Abur_2014 study. In this study all age groups were found to have nearly identical absorbance across frequencies.
+This plot illustrates how mean absorbance varies across frequencies for different age categories in the Abur_2014 study. In this study all age groups were found to have nearly identical absorbance across frequencies.<br>
 
+I found it very odd that the values for each age group are nearly identical. After talking with my professor we thought that perhabs this could have been due to a sample size issue. To check this I performed the following sql query:
+
+```{sql, connection=con_wai}
+SELECT 
+  Subjects.AgeCategoryFirstMeasurement AS AgeCategory, 
+  COUNT(DISTINCT Measurements.SubjectNumber) AS SampleSize
+FROM Measurements
+JOIN Subjects ON Measurements.SubjectNumber = Subjects.SubjectNumber
+WHERE Measurements.Identifier = 'Abur_2014'
+GROUP BY Subjects.AgeCategoryFirstMeasurement;
+
+```
+Here we can see that there were only 7 observations in each age group category. Such a limited sample size may have restricted the ability to observe meaningful differences between age groupls.
 
 ---
 
@@ -211,6 +236,7 @@ LIMIT 100;
 
 
 # Study 2: Hunter_2016 (Including NICU)
+
 Next, I explored the Hunter_2016 study, which includes NICU participants:
 ```{sql, connection=con_wai, output.var="age_data_Hunter_2016"}
 SELECT 
@@ -219,8 +245,10 @@ SELECT
   AVG(Measurements.Absorbance) AS MeanAbsorbance
 FROM Measurements
 JOIN Subjects ON Measurements.SubjectNumber = Subjects.SubjectNumber
-WHERE Measurements.Identifier = 'Hunter_2016' -- Adjust to your study of interest
+WHERE Measurements.Identifier = 'Hunter_2016' 
+  AND Measurements.Frequency >= 200  -- Apply frequency filter in SQL
 GROUP BY Subjects.AgeCategoryFirstMeasurement, Measurements.Frequency;
+
 
 ```
 

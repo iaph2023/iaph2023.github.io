@@ -8,6 +8,7 @@
 
 <meta name="author" content="Ian Palmer">
 <meta name="dcterms.date" content="2024-11-08">
+<meta name="description" content="Analyzing NCAA Home-Court Advantage">
 
 <title>iaph2023.github.io - Mini Project 3 Final</title>
 <style>
@@ -153,6 +154,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./MiniProject3.html">
  <span class="dropdown-text">Project 3</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./Project4_SQL.html">
+ <span class="dropdown-text">Project 4</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -177,6 +182,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1 class="title">Mini Project 3 Final</h1>
 </div>
 
+<div>
+  <div class="description">
+    <p>Analyzing NCAA Home-Court Advantage</p>
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -203,99 +213,159 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Analysis Plan:</p>
-<p>To test whether home-court advantage has a measurable effect on win percentages, we’ll calculate the observed difference in median win percentage between home and away games across all NCAA teams in our dataset. To determine if this observed difference could happen by chance, we’ll use a permutation test. Specifically, we’ll shuffle the “home” and “away” labels for each team multiple times and calculate the median difference in win percentages after each shuffle. By comparing our observed difference to this distribution of permuted differences, we can assess whether any observed effect is statistically significant.</p>
+<p><em>Analysis Plan:</em><br></p>
+<p>To test whether home-court advantage has a measurable effect on win percentages, we’ll calculate the observed difference in median win percentage between home and away games across all NCAA men’s basketball teams in our dataset. To determine if this observed difference could happen by chance, we’ll use a permutation test. Specifically, we’ll shuffle the “home” and “away” labels for each team multiple times and calculate the median difference in win percentages after each shuffle. By comparing our observed difference to this distribution of permuted differences, we can assess whether any observed effect is statistically significant.</p>
 <p>The result will show whether the median win percentage difference between home and away games is greater than what we’d expect by random chance alone. A low p-value would suggest that the difference is meaningful and likely due to a true home-court advantage.</p>
-<p>Data Source:</p>
+<p><em>Data Source:</em><br></p>
 <p>The data used in this analysis comes from a Kaggle dataset by Nishaan Amin, titled March Madness Data, which includes statistics on NCAA men’s basketball tournament teams from 2008 to 2024 (excluding 2020, as the tournament was canceled due to COVID-19). Specifically, we used two files: Barttorvik Home.csv and Barttorvik Away.csv, which provide team statistics for home and away games. These files were sourced from <a href="https://www.barttorvik.com/#">Barttorvik’s college basketball data</a>. The full dataset is available on Kaggle: <a href="https://www.kaggle.com/datasets/nishaanamin/march-madness-data/data?select=Barttorvik+Home.csv">Home file</a> and <a href="https://www.kaggle.com/datasets/nishaanamin/march-madness-data/data?select=Barttorvik+Away.csv">Away file</a>.</p>
+<p>Below is the original data:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Original Data</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>home_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Barttorvik Home.csv"</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>away_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Barttorvik Away.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>I loaded the data files, which provided team names and their respective winning percentages (WIN.) for home and away games. The data required some cleaning and restructuring to make it suitable for analysis.</p>
+<p><em>Visualizing the Original Data</em><br> Before diving into the analysis, it’s important to understand how win percentages differ between home and away games. To do this, I created a boxplot that compares the distributions of win percentages for home and away games. The boxplot provides a summary of the data by showing the median, interquartile range (IQR), and potential outliers for each location.</p>
+<p>By visualizing the data in this way, we can see how performance at home differs from performance away, highlighting trends in win percentage distributions and helping to establish a foundation for further analysis. Below is the resulting boxplot.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select Relevant Columns and Add Location Column</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>home_data <span class="ot">&lt;-</span> home_data <span class="sc">|&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(TEAM, WIN.) <span class="sc">|&gt;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">win_pct =</span> WIN.) <span class="sc">|&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">location =</span> <span class="st">"home"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>away_data <span class="ot">&lt;-</span> away_data <span class="sc">|&gt;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(TEAM, WIN.) <span class="sc">|&gt;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">win_pct =</span> WIN.) <span class="sc">|&gt;</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">location =</span> <span class="st">"away"</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#Group by TEAM and Location, Calculate Median Win Percentage</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>home_median <span class="ot">&lt;-</span> home_data <span class="sc">|&gt;</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TEAM, location) <span class="sc">|&gt;</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>away_median <span class="ot">&lt;-</span> away_data <span class="sc">|&gt;</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TEAM, location) <span class="sc">|&gt;</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine Home and Away Results</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>combined_median_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(home_median, away_median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Calculate the Observed Difference in Median Win Percentage</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>observed_diff <span class="ot">&lt;-</span> combined_median_data <span class="sc">|&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location) <span class="sc">|&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(median_win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">diff =</span> <span class="fu">diff</span>(median_win_pct)) <span class="sc">|&gt;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(diff)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Observed Difference in Median Win Percentage (Home - Away):"</span>, observed_diff, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Observed Difference in Median Win Percentage (Home - Away): 31.16884 </code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define Permutation Function (Shuffling location within each team)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>calculate_permutation <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(TEAM) <span class="sc">|&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">location =</span> <span class="fu">sample</span>(location, <span class="at">replace =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(location) <span class="sc">|&gt;</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(median_win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">diff =</span> <span class="fu">diff</span>(median_win_pct)) <span class="sc">|&gt;</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(diff)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Permutation Test</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>num_permutations <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>perm_results <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>num_permutations, <span class="sc">~</span> <span class="fu">calculate_permutation</span>(combined_median_data))</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(perm_results) <span class="sc">&gt;=</span> <span class="fu">abs</span>(observed_diff))</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Two-Sided P-value:"</span>, p_value, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Two-Sided P-value: 0 </code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of Permuted Differences with the Observed Difference</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(perm_results), <span class="fu">aes</span>(<span class="at">x =</span> perm_results)) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"skyblue"</span>) <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> observed_diff, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Permutation Test: Distribution of Permuted Differences"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Difference in Median Win Percentage (Home  - Away)"</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot comparing home and away win percentages</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  home_data <span class="sc">|&gt;</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">location =</span> <span class="st">"Home"</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  away_data <span class="sc">|&gt;</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">location =</span> <span class="st">"Away"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(combined_data, <span class="fu">aes</span>(<span class="at">x =</span> location, <span class="at">y =</span> WIN., <span class="at">fill =</span> location)) <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Win Percentages by Location"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Game Location"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Win Percentage"</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="MiniProject3_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="MiniProject3_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" alt="Boxplot comparing win percentages for NCAA teams by game location. The left box represents away games, showing a lower median win percentage and a tighter distribution, while the right box represents home games, showing a higher median win percentage with a wider range and several outliers below the lower whisker. The chart emphasizes the significant difference in performance between home and away games." width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Explanation of Plot:</p>
+<p>We can see that the boxplot shows that teams tend to perform better at home than away, as indicated by the higher median win percentage for home games. The distribution of home win percentages is also wider, with more variability compared to away games, which tend to cluster around lower values. This suggests a significant home-court advantage in NCAA basketball games.<br></p>
+<p>To further explore this trend and prepare for a more detailed analysis, I needed to clean and organize the data. By calculating summary statistics and structuring the data appropriately, I ensured it was ready for robust hypothesis testing and visualization. Below are the steps I took to wrangle the data.</p>
+<p><em>Date Wrangling</em><br> Here, I selected the relevant columns, renamed them for clarity, and added a column to indicate whether the data corresponded to home or away games. I also grouped the data by team and location to calculate the median win percentage for each group.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Reload original data to avoid values getting changed</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>home_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Barttorvik Home.csv"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>away_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Barttorvik Away.csv"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns and rename for clarity</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a "location" column to distinguish between home and away games</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>home_data <span class="ot">&lt;-</span> home_data <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(TEAM, WIN.) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">win_pct =</span> WIN.) <span class="sc">|&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">location =</span> <span class="st">"home"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>away_data <span class="ot">&lt;-</span> away_data <span class="sc">|&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(TEAM, WIN.) <span class="sc">|&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">win_pct =</span> WIN.) <span class="sc">|&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">location =</span> <span class="st">"away"</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#Group by TEAM and Location, Calculate Median Win Percentage</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>home_median <span class="ot">&lt;-</span> home_data <span class="sc">|&gt;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TEAM, location) <span class="sc">|&gt;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>away_median <span class="ot">&lt;-</span> away_data <span class="sc">|&gt;</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TEAM, location) <span class="sc">|&gt;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine Home and Away Results</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>combined_median_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(home_median, away_median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here is a quick summary of the results found above, sorted by location.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the median win percentages for home and away</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>location_medians <span class="ot">&lt;-</span> combined_median_data <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location) <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(median_win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the results</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>location_medians</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  location median_win_pct
+  &lt;chr&gt;             &lt;dbl&gt;
+1 away               54.5
+2 home               85.7</code></pre>
+</div>
+</div>
+<p>Next, we can calculate the observed difference in median win percentage. This will show us the perceved advantage of playing at home compared to playing away.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Calculate the Observed Difference in Median Win Percentage</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>observed_diff <span class="ot">&lt;-</span> combined_median_data <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(median_win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">diff =</span> <span class="fu">diff</span>(median_win_pct)) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(diff)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Observed Difference in Median Win Percentage (Home - Away):"</span>, observed_diff, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Observed Difference in Median Win Percentage (Home - Away): 31.16884 </code></pre>
+</div>
+</div>
+<p>From here we get a value of around 31%. This means that for NCAA mens basketball from 2008-2024 there was 31% more wins when playing at home compared to away.</p>
+<p>In order to see if this result is statistically significant I chose to perform a hypothesis test using a permutation function. Using 10000 random samples I shuffled the location of each team in order to make the win percentage uncorrelated with location. We then can compare our original observed difference of 31% to the distribution of randomized outcomes. This will return a two sided P-value.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define Permutation Function (Shuffling location within each team)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>calculate_permutation <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(TEAM) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">location =</span> <span class="fu">sample</span>(location, <span class="at">replace =</span> <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(location) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">median_win_pct =</span> <span class="fu">median</span>(median_win_pct, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">diff =</span> <span class="fu">diff</span>(median_win_pct)) <span class="sc">|&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(diff)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Permutation Test</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>num_permutations <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>perm_results <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>num_permutations, <span class="sc">~</span> <span class="fu">calculate_permutation</span>(combined_median_data))</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the two-sided p-value</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(perm_results) <span class="sc">&gt;=</span> <span class="fu">abs</span>(observed_diff))</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Two-Sided P-value:"</span>, p_value, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Two-Sided P-value: 0 </code></pre>
+</div>
+</div>
+<p>A P-value of 0 implies that it is statistically impossible for the observed difference to have occurred by chance. Or in other words, in the 10000 samples that we conducted none of the observed differences were greater than 31%.</p>
+<p>Finally, I used a histogram to visulize the permuted distribution and compared it to the observed difference.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of Permuted Differences with the Observed Difference</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(perm_results), <span class="fu">aes</span>(<span class="at">x =</span> perm_results)) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"skyblue"</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> observed_diff, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Permutation Test: Distribution of Permuted Differences"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Difference in Median Win Percentage (Home  - Away)"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="MiniProject3_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" alt="Histogram displaying the distribution of permuted differences in median win percentages (Home - Away) for NCAA basketball teams. The x-axis shows the difference in win percentages, while the y-axis represents the frequency of these differences across 10,000 permutations. The red dashed line marks the observed difference of approximately 31%, which lies far to the right of the distribution, indicating that the observed difference is highly unlikely under the null hypothesis of no true difference between home and away win percentages." width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>Explanation of Plot:</em><br></p>
 <p>The histogram shows the distribution of permuted differences in median win percentages between home and away games, simulating what we’d expect to see under the null hypothesis (no real difference between home and away performance). Each bar represents the frequency of permuted differences from our 1,000 random shuffles of the home and away labels. The red dashed line on the far right marks the observed difference in median win percentage, which is approximately 31.17%.</p>
-<p>Summary of Findings:</p>
+<p><em>Summary of Findings:</em><br></p>
 <p>The observed difference in median win percentages between home and away games is 31.17%, indicating that teams tend to perform better at home by a substantial margin. The two-sided p-value of 0 confirms that this observed difference is highly statistically significant. None of the permuted differences reached or exceeded the observed value, strongly suggesting that the observed home-court advantage is not due to random variation.</p>
 <p>This analysis provides strong evidence that playing at home has a positive and significant impact on NCAA teams’ win percentages. Factors such as crowd support, familiarity with the environment, and the absence of travel fatigue may contribute to this advantage. The findings show that home-court advantage is likely a real and influential factor in game outcomes.</p>
+<p><em>Discussion: Generalizability of Results</em><br> This analysis highlights a significant home-court advantage in NCAA men’s basketball, with a 31% higher median win percentage for home games compared to away games. While this result is statistically significant within the scope of the dataset, it is important to consider its generalizability. The dataset spans 2008–2024 and includes a subset of NCAA teams. These findings probably could be extended to other NCAA teams under similar conditions but may not fully capture the variability across different leagues, sports, or time periods. Further research is needed to determine whether the magnitude of home-court advantage is consistent across other contexts.</p>
 
 
 
