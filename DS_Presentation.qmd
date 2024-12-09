@@ -1,0 +1,452 @@
+---
+title: "Data Science Final Presentation"
+author: "Ian Palmer"
+subtitle: "12/09/2024"
+format:
+  revealjs:
+    scrollable: true
+    slide-number: true
+    show-slide-number: all
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+
+## Project 1 - Part 1: Lisa's Vegetable Garden
+
+- **Dataset:** TidyTuesday's May 28, 2024 release.
+  - Records from Lisa Lendway's 2020 and 2021 vegetable gardens.
+  - Includes planting, harvesting, and spending data.
+
+- **Plan:** Explore harvest trends in 2020 by calculating average monthly harvest weights and visualizing seasonal patterns.
+
+- **Findings:** 
+  - Harvest weights increased steadily from June, peaked in September, and declined slightly in October.
+  - Developed skills in data wrangling, date manipulation, and visualization with the tidyverse.
+
+## Visulization
+
+```{r, message=FALSE, warning=FALSE}
+#| echo: false
+
+library(tidyverse)
+tuesdata <- tidytuesdayR::tt_load(2024, week = 22)
+
+harvest_2020 <- tuesdata$harvest_2020
+harvest_2021 <- tuesdata$harvest_2021
+planting_2020 <- tuesdata$planting_2020
+planting_2021 <- tuesdata$planting_2021
+spending_2020 <- tuesdata$spending_2020
+spending_2021 <- tuesdata$spending_2021
+```
+
+```{r}
+#| echo: false
+# Create a new dataset with average harvest weight per month
+harvest_2020_avg <- harvest_2020 |>
+  mutate(month = as.Date(format(as.Date(date), "%Y-%m-01"))) |> 
+  group_by(month) |>
+  summarize(avg_weight = mean(weight, na.rm = TRUE))
+harvest_2020_avg
+
+```
+
+
+```{r, out.width= "80%", out.hight= "75%", fig.align='center'}
+#| echo: false
+#| eval: true
+ggplot(harvest_2020_avg, aes(x = month, y = avg_weight)) +  
+  geom_line() +  
+  geom_point() +  
+  labs(
+    title = "Average Weight of Vegetables Harvested per Month in 2020 Season",  # Set the plot title
+    x = "Month",  # Label for the x-axis (Month)
+    y = "Average Weight (grams)"  # Label for the y-axis (Average Weight in grams)
+  )
+```
+
+## Project 2 - Part 2: Carbon Emissions
+
+- **Dataset:** TidyTuesday's May 21, 2024 release.
+  - Historical emissions data from 1854–present.
+
+- **Plan:** Summarize average annual carbon emissions and visualize trends over time.
+
+- **Findings:** 
+  - Emissions rose sharply during the mid-20th century, reflecting industrialization and increased energy use.
+  - Strengthened skills in data summarization, trend analysis, and visualization using the tidyverse.
+
+
+## Visulization
+```{r, message=FALSE, warning=FALSE}
+#| echo: false
+#| eval: true
+tuesdata <- tidytuesdayR::tt_load(2024, week = 21)
+
+emissions <- tuesdata$emissions
+```
+
+```{r}
+#| echo: true
+#| eval: true
+summary_data <- emissions |>
+  select(year, total_emissions_MtCO2e) |>
+  group_by(year) |>
+  summarize(ave_emissions = mean(total_emissions_MtCO2e, na.rm = TRUE)) 
+
+```
+
+
+```{r, out.width= "80%", out.hight= "75%", fig.align='center'}
+#| echo: false
+#| eval: true
+ggplot(summary_data, aes(x = year, y = ave_emissions)) +
+  geom_point() +  # Add points for each year's emissions
+  geom_smooth(se = FALSE) +  # Add a smooth trend line without confidence intervals
+  labs(
+    x = "Year",  # Label for the x-axis
+    y = "Average Carbon Emissions (MtCO2e)",  # Label for the y-axis
+    title = "Average Carbon Emissions per Year"  # Set the plot title
+  )
+```
+
+## Project 2: Netflix Title Analysis
+
+- **Dataset:** TidyTuesday's April 20, 2021 release.
+  - Metadata on Netflix movies and TV shows, including release years, titles, and associated details.
+
+- **Plan:** Explore trends in Netflix’s content catalog:
+  - Analyze the distribution of movies vs. TV shows.
+  - Examine release year trends and common title keywords.
+
+- **Findings:** 
+  - Netflix's library is dominated by movies and modern content (post-2000).
+  - Learned to apply string manipulation and visualization techniques with tidyverse.
+
+## Visualization 1
+
+```{r, message=FALSE, warning=FALSE}
+#| echo: false
+#| eval: true
+library(tidyverse)
+tuesdata <- tidytuesdayR::tt_load('2021-04-20')
+netflix <- tuesdata$netflix
+```
+
+
+```{r}
+#| echo: true
+#| eval: true
+
+netflix_type_count <- netflix |>
+  count(type)
+```
+
+
+```{r, out.width= "80%", out.hight= "75%", fig.align='center'}
+#| echo: false
+#| eval: true
+ggplot(netflix_type_count, aes(x = type, y = n, fill = type)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Distribution of Movies vs TV Shows",
+    x = "Content Type",
+    y = "Count"
+  )
+```
+
+
+## Visualization 2
+
+```{r}
+#| echo: true
+#| eval: true
+netflix_year_count <- netflix |>
+  count(release_year) |>
+  arrange(desc(n))
+```
+
+
+```{r, out.width= "80%", out.hight= "75%", fig.align='center'}
+#| echo: false
+#| eval: true
+ggplot(netflix_year_count, aes(x = release_year, y = n)) +
+  geom_line() +
+  labs(
+    title = "Netflix Content Release Year Distribution",
+    x = "Release Year",
+    y = "Count"
+  )
+```
+
+## Visualization 3
+
+```{r}
+#| echo: false
+#| eval: true
+netflix_lowercase_titles <- netflix |>
+  mutate(lower_title = str_to_lower(title))
+
+#Use regular expressions to extract words and exclude those containing digits
+netflix_words <- netflix_lowercase_titles |>
+  separate_rows(lower_title, sep = "\\s+") |>
+  filter(!str_detect(lower_title, "\\d"))
+
+#Remove common words that are not of interest
+common_words <- c("the", "and", "in", "of", "to", "a", "is", "for", "with", "on", "at", "by", "an", "from", "i", "&")
+
+netflix_words_final <- netflix_words |>
+  filter(!is.element(lower_title, common_words))
+
+#Count the frequency of each word
+popular_words <- netflix_words_final |>
+  count(lower_title, sort = TRUE)
+```
+
+
+```{r, out.width= "80%", out.hight= "75%", fig.align='center'}
+#| echo: false
+#| eval: true
+popular_words |>
+  head(10) |>
+  ggplot(aes(x = reorder(lower_title, n), y = n)) +
+  geom_bar(stat = "identity", fill = "green") +
+  coord_flip() +
+  labs(title = "Top 10 Most Common Words in Netflix Titles",
+       x = "Words",
+  )
+```
+
+
+## Project 3: NCAA Home-Court Advantage
+
+- **Dataset:** Kaggle March Madness Data (2008–2024, excluding 2020).
+- **Plan:** Test the **null hypothesis** of no difference in win percentages between home and away games using **permutation testing**.
+- **Findings:**
+  - Observed a **31% higher win percentage at home**.
+  - Learned to simulate random outcomes, perform hypothesis testing, and visualize results.
+  
+## Permutation and Null Hypothesis Test
+
+```{r}
+#| echo: false
+#| eval: true
+library(tidyverse)
+# Original Data
+home_data <- read.csv("Barttorvik Home.csv")
+away_data <- read.csv("Barttorvik Away.csv")
+
+```
+
+
+```{r}
+#| echo: false
+#| eval: true
+home_data <- read.csv("Barttorvik Home.csv")
+away_data <- read.csv("Barttorvik Away.csv")
+
+# Select relevant columns and rename for clarity
+# Add a "location" column to distinguish between home and away games
+home_data <- home_data |>
+  select(TEAM, WIN.) |>
+  rename(win_pct = WIN.) |>
+  mutate(location = "home")
+
+away_data <- away_data |>
+  select(TEAM, WIN.) |>
+  rename(win_pct = WIN.) |>
+  mutate(location = "away")
+
+#Group by TEAM and Location, Calculate Median Win Percentage
+home_median <- home_data |>
+  group_by(TEAM, location) |>
+  summarise(median_win_pct = median(win_pct, na.rm = TRUE))
+
+away_median <- away_data |>
+  group_by(TEAM, location) |>
+  summarise(median_win_pct = median(win_pct, na.rm = TRUE))
+
+# Combine Home and Away Results
+combined_median_data <- bind_rows(home_median, away_median)
+```
+
+
+
+```{r}
+#| echo: true
+#| eval: true
+#Calculate the Observed Difference in Median Win Percentage
+observed_diff <- combined_median_data |>
+  group_by(location) |>
+  summarise(median_win_pct = median(median_win_pct, na.rm = TRUE)) |>
+  summarise(diff = diff(median_win_pct)) |>
+  pull(diff)
+
+cat("Observed Difference in Median Win Percentage (Home - Away):", observed_diff, "\n")
+```
+
+```{r}
+#| echo: true
+#| eval: true
+# Define Permutation Function (Shuffling location within each team)
+calculate_permutation <- function(data) {
+  data |>
+    group_by(TEAM) |>
+    mutate(location = sample(location, replace = FALSE)) |>
+    group_by(location) |>
+    summarise(median_win_pct = median(median_win_pct, na.rm = TRUE)) |>
+    summarise(diff = diff(median_win_pct)) |>
+    pull(diff)
+}
+#Permutation Test
+num_permutations <- 10000
+perm_results <- map_dbl(1:num_permutations, ~ calculate_permutation(combined_median_data))
+
+# Calculate the two-sided p-value
+p_value <- mean(abs(perm_results) >= abs(observed_diff))
+cat("Two-Sided P-value:", p_value, "\n")
+```
+
+## Visulization
+
+
+```{r}
+#| echo: false
+#| eval: true
+ggplot(data.frame(perm_results), aes(x = perm_results)) +
+  geom_histogram(bins = 30, color = "black", fill = "skyblue") +
+  geom_vline(xintercept = observed_diff, color = "red", linetype = "dashed", linewidth = 1.2) +
+  labs(
+    title = "Permutation Test: Distribution of Permuted Differences",
+    x = "Difference in Median Win Percentage (Home  - Away)",
+    y = "Frequency"
+  )
+```
+
+
+## Project 4: SQL Analysis of WAI Auditory Data
+
+- **Goals:** Recreate Figure 1 from Voss (2019) and analyze absorbance trends by age.
+- **Approach:** Use SQL to query the **WAI Database** and R for visualization.
+- **Findings:** 
+  - Replicated Voss (2019) Figure 1 for 12 studies.
+  - Found age-related differences in **Hunter (2016)**, including NICU data.
+  
+  
+## Visulization 1: Recreating Voss Graph
+
+```{r}
+#| echo: false
+#| eval: true
+#Establish Connection
+library(RMariaDB)
+library(tidyverse)
+con_wai <- dbConnect(
+  MariaDB(), host = "scidb.smith.edu",
+  user = "waiuser", password = "smith_waiDB", 
+  dbname = "wai"
+)
+
+# Access the relavent tables
+Measurements <- tbl(con_wai, "Measurements")
+PI_Info <- tbl(con_wai, "PI_Info")
+Subjects <- tbl(con_wai, "Subjects")
+```
+
+```{sql, connection=con_wai, output.var="data", echo = TRUE, EVEL= TRUE}
+
+SELECT 
+  Measurements.Identifier,
+  PI_Info.AuthorsShortList,
+  Measurements.Instrument,
+  Measurements.Frequency,
+  AVG(Measurements.Absorbance) AS MeanAbsorbance,
+  CONCAT(PI_Info.AuthorsShortList, ' et al. N=', 
+         COUNT(DISTINCT CONCAT(Measurements.SubjectNumber, Measurements.Ear)), ', ', Measurements.Instrument) AS Legend_Label
+FROM Measurements
+JOIN PI_Info ON Measurements.Identifier = PI_Info.Identifier
+WHERE Measurements.Identifier IN ('Abur_2014', 'Feeney_207', 'Groon_2015', 'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006', 'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010', 'Werner_2010')
+  AND Measurements.Frequency >= 200  -- Apply frequency filter in SQL
+GROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortList, Measurements.Frequency;
+
+
+```
+
+```{r}
+#| echo: false
+#| eval: true
+ggplot(data, aes(x = Frequency, y = MeanAbsorbance, color = Legend_Label)) +
+  geom_line(size = 0.8) +
+  labs(
+    title = "Mean Absorbance from Publications in WAI Database",
+    x = "Frequency (Hz)",
+    y = "Mean Absorbance"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(
+    trans = "log10",
+    breaks = c(200, 400, 600, 800, 1000, 2000, 4000, 6000, 8000),
+    labels = c("200", "400", "600", "800", "1000", "2000", "4000", "6000", "8000"),
+    limits = c(200, 8000)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1),
+    expand = c(0, 0)
+  ) +
+  theme(
+    legend.position = c(0.2, 0.8),  # Place legend inside the plot
+    legend.title = element_blank()  # Remove legend title
+  )
+```
+
+## Visulization 2: Deeper look into Hunter 2016 Study
+
+```{sql, connection=con_wai, output.var="age_data_Hunter_2016", echo = TRUE, EVEL= TRUE}
+SELECT 
+  Subjects.AgeCategoryFirstMeasurement AS AgeCategory, 
+  Measurements.Frequency, 
+  AVG(Measurements.Absorbance) AS MeanAbsorbance
+FROM Measurements
+JOIN Subjects ON Measurements.SubjectNumber = Subjects.SubjectNumber
+WHERE Measurements.Identifier = 'Hunter_2016' 
+  AND Measurements.Frequency >= 200  -- Apply frequency filter in SQL
+GROUP BY Subjects.AgeCategoryFirstMeasurement, Measurements.Frequency;
+
+
+```
+
+```{r, fig.height=9, fig.width=8}
+#| echo: false
+#| eval: true
+ggplot(age_data_Hunter_2016, aes(x = Frequency, y = MeanAbsorbance, color = AgeCategory)) +
+  geom_line(size = 1) +
+  labs(
+    title = "Frequency vs. Mean Absorbance by Age Category (Hunter_2016)",
+    x = "Frequency (Hz)",
+    y = "Mean Absorbance",
+    color = "Age Category"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(
+    trans = "log10",
+    breaks = c(200, 400, 600, 800, 1000, 2000, 4000, 6000, 8000),
+    labels = c("200", "400", "600", "800", "1000", "2000", "4000", "6000", "8000"),
+    limits = c(200, 8000)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1),
+    expand = c(0, 0)
+  ) +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(hjust = 0.5)
+  )
+
+```
+
+
+
+## Thanks For Listening!

@@ -22,6 +22,11 @@ website:
            href: MiniProject3.html
          - text: "Project 4"
            href: Project4_SQL.html
+      - text: "Presentations"
+        menu: 
+          - text: "Data Science Projects Presentation"
+            href: "DS_Presentation.html"
+      
 
 format:
   html:

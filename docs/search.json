@@ -61,5 +61,124 @@
     "title": "Project 4 - SQL",
     "section": "",
     "text": "There are two main goals of this project. First, to recreate Figure 1 from Voss (2020) using SQL to query the Wideband Acoustic Immittance (WAI) Database. This requires calculating mean absorbance values for 12 selected studies and producing a correctly labeled plot in R. Second, to explore a study in the database where subjects of varying age categories, were enrolled. For this study, I will analyze frequency vs. mean absorption by age category and create an informative plot to visualize the data.\nThe SQL queries handle data filtering, aggregation, and JOIN operations to generate datasets ready for visualization in R. The analysis aims to demonstrate proficiency in both SQL for data wrangling and R for plotting.\nEstablish connection to the database and also create variables for needed tables for ease of use.\n\n#Establish Connection\nlibrary(RMariaDB)\nlibrary(tidyverse)\ncon_wai &lt;- dbConnect(\n  MariaDB(), host = \"scidb.smith.edu\",\n  user = \"waiuser\", password = \"smith_waiDB\", \n  dbname = \"wai\"\n)\n\n# Access the relavent tables\nMeasurements &lt;- tbl(con_wai, \"Measurements\")\nPI_Info &lt;- tbl(con_wai, \"PI_Info\")\nSubjects &lt;- tbl(con_wai, \"Subjects\")\n\nA look at all tables in the data set\n\nSHOW TABLES;\n\n\n7 records\n\n\nTables_in_wai\n\n\n\n\nCodebook\n\n\nMeasurements\n\n\nMeasurements_pre2020\n\n\nPI_Info\n\n\nPI_Info_OLD\n\n\nSubjects\n\n\nSubjects_pre2020\n\n\n\n\n\nView the Measurements variables\n\nDESCRIBE Measurements;\n\n\nDisplaying records 1 - 10\n\n\nField\nType\nNull\nKey\nDefault\nExtra\n\n\n\n\nIdentifier\nvarchar(50)\nNO\nPRI\nNA\n\n\n\nSubjectNumber\nint\nNO\nPRI\nNA\n\n\n\nSession\nint\nNO\nPRI\nNA\n\n\n\nEar\nvarchar(50)\nNO\nPRI\n\n\n\n\nInstrument\nvarchar(50)\nNO\nPRI\n\n\n\n\nAge\nfloat\nYES\n\nNA\n\n\n\nAgeCategory\nvarchar(50)\nYES\n\nNA\n\n\n\nEarStatus\nvarchar(50)\nYES\n\nNA\n\n\n\nTPP\nfloat\nYES\n\nNA\n\n\n\nAreaCanal\nfloat\nYES\n\nNA\n\n\n\n\n\n\nView the PI_Info variables\n\nDESCRIBE PI_Info;\n\n\nDisplaying records 1 - 10\n\n\nField\nType\nNull\nKey\nDefault\nExtra\n\n\n\n\nIdentifier\nvarchar(50)\nNO\nPRI\nNA\n\n\n\nYear\nint\nNO\n\nNA\n\n\n\nAuthors\ntext\nNO\n\nNA\n\n\n\nAuthorsShortList\ntext\nNO\n\nNA\n\n\n\nTitle\ntext\nNO\n\nNA\n\n\n\nJournal\ntext\nNO\n\nNA\n\n\n\nURL\ntext\nNO\n\nNA\n\n\n\nAbstract\ntext\nNO\n\nNA\n\n\n\nDataSubmitterName\ntext\nNO\n\nNA\n\n\n\nDataSubmitterEmail\ntext\nNO\n\nNA\n\n\n\n\n\n\nSelecting and viewing relevant columns within a study\n\nSELECT \n  Identifier,\n  Frequency,\n  Absorbance\nFROM Measurements\nWhere Identifier = \"Abur_2014\"\n\nLIMIT 0, 5;\n\n\n5 records\n\n\nIdentifier\nFrequency\nAbsorbance\n\n\n\n\nAbur_2014\n210.938\n0.0333379\n\n\nAbur_2014\n234.375\n0.0315705\n\n\nAbur_2014\n257.812\n0.0405751\n\n\nAbur_2014\n281.250\n0.0438399\n\n\nAbur_2014\n304.688\n0.0486400\n\n\n\n\n\nThe following query calculates mean absorbance values for the 12 studies in Voss (2020), along with data for creating a descriptive plot legend:\n\n\nSELECT \n  Measurements.Identifier,\n  PI_Info.AuthorsShortList,\n  Measurements.Instrument,\n  Measurements.Frequency,\n  AVG(Measurements.Absorbance) AS MeanAbsorbance,\n  CONCAT(PI_Info.AuthorsShortList, ' et al. N=', \n         COUNT(DISTINCT CONCAT(Measurements.SubjectNumber, Measurements.Ear)), ', ', Measurements.Instrument) AS Legend_Label\nFROM Measurements\nJOIN PI_Info ON Measurements.Identifier = PI_Info.Identifier\nWHERE Measurements.Identifier IN ('Abur_2014', 'Feeney_207', 'Groon_2015', 'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006', 'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010', 'Werner_2010')\nGROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortList, Measurements.Frequency;\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\nIdentifier\nAuthorsShortList\nInstrument\nFrequency\nMeanAbsorbance\nLegend_Label\n\n\n\n\nAbur_2014\nAbur et al.\nHearID\n210.938\n0.0784746\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n234.375\n0.0826420\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n257.812\n0.0948482\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n281.250\n0.1031472\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n304.688\n0.1137576\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n328.125\n0.1221205\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n351.562\n0.1334329\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n375.000\n0.1447725\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n398.438\n0.1563874\nAbur et al. et al. N=14, HearID\n\n\nAbur_2014\nAbur et al.\nHearID\n421.875\n0.1806973\nAbur et al. et al. N=14, HearID\n\n\n\n\n\nTurns the previous query into an output variable called “data” to be used as the main data source for our plot in R.\n\n\nSELECT \n  Measurements.Identifier,\n  PI_Info.AuthorsShortList,\n  Measurements.Instrument,\n  Measurements.Frequency,\n  AVG(Measurements.Absorbance) AS MeanAbsorbance,\n  CONCAT(PI_Info.AuthorsShortList, ' et al. N=', \n         COUNT(DISTINCT CONCAT(Measurements.SubjectNumber, Measurements.Ear)), ', ', Measurements.Instrument) AS Legend_Label\nFROM Measurements\nJOIN PI_Info ON Measurements.Identifier = PI_Info.Identifier\nWHERE Measurements.Identifier IN ('Abur_2014', 'Feeney_207', 'Groon_2015', 'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006', 'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010', 'Werner_2010')\nGROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortList, Measurements.Frequency;\n\nThe resulting dataset was visualized in R to replicate the mean absorbance plot from Voss (2020):\n\ndata$Frequency &lt;- as.numeric(data$Frequency)\ndata &lt;- data |&gt;\n  filter(Frequency &gt;= 200)\n\nggplot(data, aes(x = Frequency, y = MeanAbsorbance, color = Legend_Label)) +\n  geom_line(size = 0.8) +\n  labs(\n    title = \"Mean absorbance from publication's in WAI database\",\n    x = \"Frequency (Hz)\",\n    y = \"Mean Absorbance\",\n  ) +\n  theme_minimal() +\n  scale_x_continuous(\n    trans = \"log10\",\n    breaks = c(200, 400, 600, 800, 1000, 2000, 4000, 6000, 8000),\n    labels = c(\"200\", \"400\", \"600\", \"800\", \"1000\", \"2000\", \"4000\", \"6000\", \"8000\"),\n    limits = c(200, 8000)\n  ) +\n  scale_y_continuous(\n    limits = c(0, 1),\n    expand = c(0, 0)\n  )"
+  },
+  {
+    "objectID": "DS_Presentation.html#visulization-using-line-graph-from-ggplot",
+    "href": "DS_Presentation.html#visulization-using-line-graph-from-ggplot",
+    "title": "Data Science Final Presentation",
+    "section": "Visulization Using Line Graph from ggplot",
+    "text": "Visulization Using Line Graph from ggplot\n\n\n# A tibble: 5 × 2\n  month      avg_weight\n  &lt;date&gt;          &lt;dbl&gt;\n1 2020-06-01       78.8\n2 2020-07-01      219. \n3 2020-08-01      473. \n4 2020-09-01     1128. \n5 2020-10-01      959."
+  },
+  {
+    "objectID": "DS_Presentation.html#project-1---part-1---lisas-vegetable-garden",
+    "href": "DS_Presentation.html#project-1---part-1---lisas-vegetable-garden",
+    "title": "Data Science Final Presentation",
+    "section": "Project 1 - Part 1 - Lisa’s Vegetable Garden",
+    "text": "Project 1 - Part 1 - Lisa’s Vegetable Garden\nThis project was my first experience collecting, cleaning, and visulizing data.\nFor this analysis I selected the “Lisa’s Vegetable Garden” dataset from tidytuesday as it sounded funny and interesting.\nThe data contained information on Lisa Lendway’s vegetable garden from the summers of 2020 and 2021.\nIt includes planting, harvesting, and spending details between the two years.\nI chose to visualize the average weight of vegetables harvested per month in the 2020 harvest season."
+  },
+  {
+    "objectID": "DS_Presentation.html#project-2---part-2---carbon-emissions",
+    "href": "DS_Presentation.html#project-2---part-2---carbon-emissions",
+    "title": "Data Science Final Presentation",
+    "section": "Project 2 - Part 2 - Carbon Emissions",
+    "text": "Project 2 - Part 2 - Carbon Emissions\nFor this analysis I chose another interesting tidytuesday data set called “Carbon Emissions”.\nThis data set contained information on historical emissions data from 1854 to present.\nI wanted to visualize how carbon emissions have changed over time."
+  },
+  {
+    "objectID": "DS_Presentation.html#visulization",
+    "href": "DS_Presentation.html#visulization",
+    "title": "Data Science Final Presentation",
+    "section": "Visulization",
+    "text": "Visulization\n\n\n# A tibble: 5 × 2\n  month      avg_weight\n  &lt;date&gt;          &lt;dbl&gt;\n1 2020-06-01       78.8\n2 2020-07-01      219. \n3 2020-08-01      473. \n4 2020-09-01     1128. \n5 2020-10-01      959."
+  },
+  {
+    "objectID": "DS_Presentation.html#visulization-1",
+    "href": "DS_Presentation.html#visulization-1",
+    "title": "Data Science Final Presentation",
+    "section": "Visulization",
+    "text": "Visulization\n\nsummary_data &lt;- emissions |&gt;\n  select(year, total_emissions_MtCO2e) |&gt;\n  group_by(year) |&gt;\n  summarize(ave_emissions = mean(total_emissions_MtCO2e, na.rm = TRUE))"
+  },
+  {
+    "objectID": "DS_Presentation.html#project-1---part-1-lisas-vegetable-garden",
+    "href": "DS_Presentation.html#project-1---part-1-lisas-vegetable-garden",
+    "title": "Data Science Final Presentation",
+    "section": "Project 1 - Part 1: Lisa’s Vegetable Garden",
+    "text": "Project 1 - Part 1: Lisa’s Vegetable Garden\n\nDataset: TidyTuesday’s May 28, 2024 release.\n\nRecords from Lisa Lendway’s 2020 and 2021 vegetable gardens.\nIncludes planting, harvesting, and spending data.\n\nPlan: Explore harvest trends in 2020 by calculating average monthly harvest weights and visualizing seasonal patterns.\nFindings:\n\nHarvest weights increased steadily from June, peaked in September, and declined slightly in October.\nDeveloped skills in data wrangling, date manipulation, and visualization with the tidyverse."
+  },
+  {
+    "objectID": "DS_Presentation.html#project-2---part-2-carbon-emissions",
+    "href": "DS_Presentation.html#project-2---part-2-carbon-emissions",
+    "title": "Data Science Final Presentation",
+    "section": "Project 2 - Part 2: Carbon Emissions",
+    "text": "Project 2 - Part 2: Carbon Emissions\n\nDataset: TidyTuesday’s May 21, 2024 release.\n\nHistorical emissions data from 1854–present.\n\nPlan: Summarize average annual carbon emissions and visualize trends over time.\nFindings:\n\nEmissions rose sharply during the mid-20th century, reflecting industrialization and increased energy use.\nStrengthened skills in data summarization, trend analysis, and visualization using the tidyverse."
+  },
+  {
+    "objectID": "DS_Presentation.html#project-2-netflix-title-analysis",
+    "href": "DS_Presentation.html#project-2-netflix-title-analysis",
+    "title": "Data Science Final Presentation",
+    "section": "Project 2: Netflix Title Analysis",
+    "text": "Project 2: Netflix Title Analysis\n\nDataset: TidyTuesday’s April 20, 2021 release.\n\nMetadata on Netflix movies and TV shows, including release years, titles, and associated details.\n\nPlan: Explore trends in Netflix’s content catalog:\n\nAnalyze the distribution of movies vs. TV shows.\nExamine release year trends and common title keywords.\n\nFindings:\n\nNetflix’s library is dominated by movies and modern content (post-2000).\nLearned to apply string manipulation and visualization techniques with tidyverse."
+  },
+  {
+    "objectID": "DS_Presentation.html#visualization-1",
+    "href": "DS_Presentation.html#visualization-1",
+    "title": "Data Science Final Presentation",
+    "section": "Visualization 1",
+    "text": "Visualization 1\n\nnetflix_type_count &lt;- netflix |&gt;\n  count(type)"
+  },
+  {
+    "objectID": "DS_Presentation.html#visualization-2",
+    "href": "DS_Presentation.html#visualization-2",
+    "title": "Data Science Final Presentation",
+    "section": "Visualization 2",
+    "text": "Visualization 2\n\nnetflix_year_count &lt;- netflix |&gt;\n  count(release_year) |&gt;\n  arrange(desc(n))"
+  },
+  {
+    "objectID": "DS_Presentation.html#visualization-3",
+    "href": "DS_Presentation.html#visualization-3",
+    "title": "Data Science Final Presentation",
+    "section": "Visualization 3",
+    "text": "Visualization 3"
+  },
+  {
+    "objectID": "DS_Presentation.html#project-3-ncaa-home-court-advantage",
+    "href": "DS_Presentation.html#project-3-ncaa-home-court-advantage",
+    "title": "Data Science Final Presentation",
+    "section": "Project 3: NCAA Home-Court Advantage",
+    "text": "Project 3: NCAA Home-Court Advantage\n\nDataset: Kaggle March Madness Data (2008–2024, excluding 2020).\nPlan: Test the null hypothesis of no difference in win percentages between home and away games using permutation testing.\nFindings:\n\nObserved a 31% higher win percentage at home.\nLearned to simulate random outcomes, perform hypothesis testing, and visualize results."
+  },
+  {
+    "objectID": "DS_Presentation.html#permutation-and-null-hypothesis-test",
+    "href": "DS_Presentation.html#permutation-and-null-hypothesis-test",
+    "title": "Data Science Final Presentation",
+    "section": "Permutation and Null Hypothesis Test",
+    "text": "Permutation and Null Hypothesis Test\n\n#Calculate the Observed Difference in Median Win Percentage\nobserved_diff &lt;- combined_median_data |&gt;\n  group_by(location) |&gt;\n  summarise(median_win_pct = median(median_win_pct, na.rm = TRUE)) |&gt;\n  summarise(diff = diff(median_win_pct)) |&gt;\n  pull(diff)\n\ncat(\"Observed Difference in Median Win Percentage (Home - Away):\", observed_diff, \"\\n\")\n\nObserved Difference in Median Win Percentage (Home - Away): 31.16884 \n\n\n\n# Define Permutation Function (Shuffling location within each team)\ncalculate_permutation &lt;- function(data) {\n  data |&gt;\n    group_by(TEAM) |&gt;\n    mutate(location = sample(location, replace = FALSE)) |&gt;\n    group_by(location) |&gt;\n    summarise(median_win_pct = median(median_win_pct, na.rm = TRUE)) |&gt;\n    summarise(diff = diff(median_win_pct)) |&gt;\n    pull(diff)\n}\n#Permutation Test\nnum_permutations &lt;- 10000\nperm_results &lt;- map_dbl(1:num_permutations, ~ calculate_permutation(combined_median_data))\n\n# Calculate the two-sided p-value\np_value &lt;- mean(abs(perm_results) &gt;= abs(observed_diff))\ncat(\"Two-Sided P-value:\", p_value, \"\\n\")\n\nTwo-Sided P-value: 0"
+  },
+  {
+    "objectID": "DS_Presentation.html#visulization-2",
+    "href": "DS_Presentation.html#visulization-2",
+    "title": "Data Science Final Presentation",
+    "section": "Visulization",
+    "text": "Visulization"
+  },
+  {
+    "objectID": "DS_Presentation.html#project-4-sql-analysis-of-wai-auditory-data",
+    "href": "DS_Presentation.html#project-4-sql-analysis-of-wai-auditory-data",
+    "title": "Data Science Final Presentation",
+    "section": "Project 4: SQL Analysis of WAI Auditory Data",
+    "text": "Project 4: SQL Analysis of WAI Auditory Data\n\nGoals: Recreate Figure 1 from Voss (2019) and analyze absorbance trends by age.\nApproach: Use SQL to query the WAI Database and R for visualization.\nFindings:\n\nReplicated Voss (2019) Figure 1 for 12 studies.\nFound age-related differences in Hunter (2016), including NICU data."
+  },
+  {
+    "objectID": "DS_Presentation.html#visulization-1-recreating-voss-graph",
+    "href": "DS_Presentation.html#visulization-1-recreating-voss-graph",
+    "title": "Data Science Final Presentation",
+    "section": "Visulization 1: Recreating Voss Graph",
+    "text": "Visulization 1: Recreating Voss Graph\n\n\nSELECT \n  Measurements.Identifier,\n  PI_Info.AuthorsShortList,\n  Measurements.Instrument,\n  Measurements.Frequency,\n  AVG(Measurements.Absorbance) AS MeanAbsorbance,\n  CONCAT(PI_Info.AuthorsShortList, ' et al. N=', \n         COUNT(DISTINCT CONCAT(Measurements.SubjectNumber, Measurements.Ear)), ', ', Measurements.Instrument) AS Legend_Label\nFROM Measurements\nJOIN PI_Info ON Measurements.Identifier = PI_Info.Identifier\nWHERE Measurements.Identifier IN ('Abur_2014', 'Feeney_207', 'Groon_2015', 'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006', 'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010', 'Werner_2010')\n  AND Measurements.Frequency &gt;= 200  -- Apply frequency filter in SQL\nGROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortList, Measurements.Frequency;"
+  },
+  {
+    "objectID": "DS_Presentation.html#visulization-2-deeper-look-into-hunter-2016-study",
+    "href": "DS_Presentation.html#visulization-2-deeper-look-into-hunter-2016-study",
+    "title": "Data Science Final Presentation",
+    "section": "Visulization 2: Deeper look into Hunter 2016 Study",
+    "text": "Visulization 2: Deeper look into Hunter 2016 Study\n\nSELECT \n  Subjects.AgeCategoryFirstMeasurement AS AgeCategory, \n  Measurements.Frequency, \n  AVG(Measurements.Absorbance) AS MeanAbsorbance\nFROM Measurements\nJOIN Subjects ON Measurements.SubjectNumber = Subjects.SubjectNumber\nWHERE Measurements.Identifier = 'Hunter_2016' \n  AND Measurements.Frequency &gt;= 200  -- Apply frequency filter in SQL\nGROUP BY Subjects.AgeCategoryFirstMeasurement, Measurements.Frequency;"
   }
 ]
