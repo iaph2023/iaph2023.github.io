@@ -102,21 +102,21 @@
     "href": "DS_Presentation.html#project-1---part-1-lisas-vegetable-garden",
     "title": "Data Science Final Presentation",
     "section": "Project 1 - Part 1: Lisa’s Vegetable Garden",
-    "text": "Project 1 - Part 1: Lisa’s Vegetable Garden\n\nDataset: TidyTuesday’s May 28, 2024 release.\n\nRecords from Lisa Lendway’s 2020 and 2021 vegetable gardens.\nIncludes planting, harvesting, and spending data.\n\nPlan: Explore harvest trends in 2020 by calculating average monthly harvest weights and visualizing seasonal patterns.\nFindings:\n\nHarvest weights increased steadily from June, peaked in September, and declined slightly in October.\nDeveloped skills in data wrangling, date manipulation, and visualization with the tidyverse."
+    "text": "Project 1 - Part 1: Lisa’s Vegetable Garden\n\nDataset: TidyTuesday’s May 28, 2024 release, “Lisa’s Vegetable Garden”.\n\nRecords from Lisa Lendway’s 2020 and 2021 vegetable gardens.\nIncludes planting, harvesting, and spending data.\n\nPlan: Explore harvest trends in 2020 by calculating average monthly harvest weights and visualizing seasonal patterns.\nSkills Developed:\n\nDeveloped skills in data wrangling, date manipulation, and visualization with the tidyverse."
   },
   {
     "objectID": "DS_Presentation.html#project-2---part-2-carbon-emissions",
     "href": "DS_Presentation.html#project-2---part-2-carbon-emissions",
     "title": "Data Science Final Presentation",
     "section": "Project 2 - Part 2: Carbon Emissions",
-    "text": "Project 2 - Part 2: Carbon Emissions\n\nDataset: TidyTuesday’s May 21, 2024 release.\n\nHistorical emissions data from 1854–present.\n\nPlan: Summarize average annual carbon emissions and visualize trends over time.\nFindings:\n\nEmissions rose sharply during the mid-20th century, reflecting industrialization and increased energy use.\nStrengthened skills in data summarization, trend analysis, and visualization using the tidyverse."
+    "text": "Project 2 - Part 2: Carbon Emissions\n\nDataset: TidyTuesday’s May 21, 2024 release, “Carbon Emissions”.\n\nHistorical emissions data from 1854–present.\n\nPlan: Summarize average annual carbon emissions and visualize trends over time.\nDevloped Skills:\n\nStrengthened skills in data summarization, trend analysis, and visualization using the tidyverse."
   },
   {
     "objectID": "DS_Presentation.html#project-2-netflix-title-analysis",
     "href": "DS_Presentation.html#project-2-netflix-title-analysis",
     "title": "Data Science Final Presentation",
     "section": "Project 2: Netflix Title Analysis",
-    "text": "Project 2: Netflix Title Analysis\n\nDataset: TidyTuesday’s April 20, 2021 release.\n\nMetadata on Netflix movies and TV shows, including release years, titles, and associated details.\n\nPlan: Explore trends in Netflix’s content catalog:\n\nAnalyze the distribution of movies vs. TV shows.\nExamine release year trends and common title keywords.\n\nFindings:\n\nNetflix’s library is dominated by movies and modern content (post-2000).\nLearned to apply string manipulation and visualization techniques with tidyverse."
+    "text": "Project 2: Netflix Title Analysis\n\nDataset: TidyTuesday’s April 20, 2021 release, “Netflix Titles”.\n\nMetadata on Netflix movies and TV shows, including release years, titles, and associated details.\n\nPlan: Explore trends in Netflix’s content catalog:\n\nAnalyze the distribution of movies vs. TV shows.\nExamine release year trends and common title keywords.\n\nDevloped Skills:\n\nLearned to apply string manipulation and visualization techniques to text-heavy data sets with tidyverse."
   },
   {
     "objectID": "DS_Presentation.html#visualization-1",
@@ -144,7 +144,7 @@
     "href": "DS_Presentation.html#project-3-ncaa-home-court-advantage",
     "title": "Data Science Final Presentation",
     "section": "Project 3: NCAA Home-Court Advantage",
-    "text": "Project 3: NCAA Home-Court Advantage\n\nDataset: Kaggle March Madness Data (2008–2024, excluding 2020).\nPlan: Test the null hypothesis of no difference in win percentages between home and away games using permutation testing.\nFindings:\n\nObserved a 31% higher win percentage at home.\nLearned to simulate random outcomes, perform hypothesis testing, and visualize results."
+    "text": "Project 3: NCAA Home-Court Advantage\n\nDataset: Kaggle March Madness Data (2008–2024, excluding 2020).\nPlan: Test the null hypothesis of no difference in win percentages between home and away games using permutation testing.\nDeveloped:\n\nLearned to simulate random outcomes, perform hypothesis testing, and visualize results."
   },
   {
     "objectID": "DS_Presentation.html#permutation-and-null-hypothesis-test",
@@ -165,21 +165,21 @@
     "href": "DS_Presentation.html#project-4-sql-analysis-of-wai-auditory-data",
     "title": "Data Science Final Presentation",
     "section": "Project 4: SQL Analysis of WAI Auditory Data",
-    "text": "Project 4: SQL Analysis of WAI Auditory Data\n\nGoals: Recreate Figure 1 from Voss (2019) and analyze absorbance trends by age.\nApproach: Use SQL to query the WAI Database and R for visualization.\nFindings:\n\nReplicated Voss (2019) Figure 1 for 12 studies.\nFound age-related differences in Hunter (2016), including NICU data."
+    "text": "Project 4: SQL Analysis of WAI Auditory Data\n\nGoals: Recreate Figure 1 from Voss (2019) and analyze frequency absorbance trends by age.\nApproach: Use SQL to query the WAI Database and R for visualization.\nFindings:\n\nStrengthened understanding of combining SQL and R for efficient analysis and clear communication of results."
   },
   {
     "objectID": "DS_Presentation.html#visulization-1-recreating-voss-graph",
     "href": "DS_Presentation.html#visulization-1-recreating-voss-graph",
     "title": "Data Science Final Presentation",
     "section": "Visulization 1: Recreating Voss Graph",
-    "text": "Visulization 1: Recreating Voss Graph\n\n\nSELECT \n  Measurements.Identifier,\n  PI_Info.AuthorsShortList,\n  Measurements.Instrument,\n  Measurements.Frequency,\n  AVG(Measurements.Absorbance) AS MeanAbsorbance,\n  CONCAT(PI_Info.AuthorsShortList, ' et al. N=', \n         COUNT(DISTINCT CONCAT(Measurements.SubjectNumber, Measurements.Ear)), ', ', Measurements.Instrument) AS Legend_Label\nFROM Measurements\nJOIN PI_Info ON Measurements.Identifier = PI_Info.Identifier\nWHERE Measurements.Identifier IN ('Abur_2014', 'Feeney_207', 'Groon_2015', 'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006', 'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010', 'Werner_2010')\n  AND Measurements.Frequency &gt;= 200  -- Apply frequency filter in SQL\nGROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortList, Measurements.Frequency;"
+    "text": "Visulization 1: Recreating Voss Graph"
   },
   {
     "objectID": "DS_Presentation.html#visulization-2-deeper-look-into-hunter-2016-study",
     "href": "DS_Presentation.html#visulization-2-deeper-look-into-hunter-2016-study",
     "title": "Data Science Final Presentation",
     "section": "Visulization 2: Deeper look into Hunter 2016 Study",
-    "text": "Visulization 2: Deeper look into Hunter 2016 Study\n\nSELECT \n  Subjects.AgeCategoryFirstMeasurement AS AgeCategory, \n  Measurements.Frequency, \n  AVG(Measurements.Absorbance) AS MeanAbsorbance\nFROM Measurements\nJOIN Subjects ON Measurements.SubjectNumber = Subjects.SubjectNumber\nWHERE Measurements.Identifier = 'Hunter_2016' \n  AND Measurements.Frequency &gt;= 200  -- Apply frequency filter in SQL\nGROUP BY Subjects.AgeCategoryFirstMeasurement, Measurements.Frequency;"
+    "text": "Visulization 2: Deeper look into Hunter 2016 Study"
   },
   {
     "objectID": "DS_Presentation.html#thanks-for-listening",
@@ -187,5 +187,19 @@
     "title": "Data Science Final Presentation",
     "section": "Thanks For Listening!",
     "text": "Thanks For Listening!"
+  },
+  {
+    "objectID": "DS_Presentation.html#sql-query-1-recreating-voss-graph",
+    "href": "DS_Presentation.html#sql-query-1-recreating-voss-graph",
+    "title": "Data Science Final Presentation",
+    "section": "SQL Query 1: Recreating Voss Graph",
+    "text": "SQL Query 1: Recreating Voss Graph\n\n\nSELECT \n  Measurements.Identifier,\n  PI_Info.AuthorsShortList,\n  Measurements.Instrument,\n  Measurements.Frequency,\n  AVG(Measurements.Absorbance) AS MeanAbsorbance,\n  CONCAT(PI_Info.AuthorsShortList, ' et al. N=', \n         COUNT(DISTINCT CONCAT(Measurements.SubjectNumber, Measurements.Ear)), ', ', Measurements.Instrument) AS Legend_Label\nFROM Measurements\nJOIN PI_Info ON Measurements.Identifier = PI_Info.Identifier\nWHERE Measurements.Identifier IN ('Abur_2014', 'Feeney_207', 'Groon_2015', 'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006', 'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010', 'Werner_2010')\n  AND Measurements.Frequency &gt;= 200  -- Apply frequency filter in SQL\nGROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortList, Measurements.Frequency;"
+  },
+  {
+    "objectID": "DS_Presentation.html#sql-query-2-deeper-look-into-hunter-2016-study",
+    "href": "DS_Presentation.html#sql-query-2-deeper-look-into-hunter-2016-study",
+    "title": "Data Science Final Presentation",
+    "section": "SQL Query 2: Deeper look into Hunter 2016 Study",
+    "text": "SQL Query 2: Deeper look into Hunter 2016 Study\n\nSELECT \n  Subjects.AgeCategoryFirstMeasurement AS AgeCategory, \n  Measurements.Frequency, \n  AVG(Measurements.Absorbance) AS MeanAbsorbance\nFROM Measurements\nJOIN Subjects ON Measurements.SubjectNumber = Subjects.SubjectNumber\nWHERE Measurements.Identifier = 'Hunter_2016' \n  AND Measurements.Frequency &gt;= 200  -- Apply frequency filter in SQL\nGROUP BY Subjects.AgeCategoryFirstMeasurement, Measurements.Frequency;"
   }
 ]
