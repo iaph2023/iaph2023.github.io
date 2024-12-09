@@ -180,5 +180,12 @@
     "title": "Data Science Final Presentation",
     "section": "Visulization 2: Deeper look into Hunter 2016 Study",
     "text": "Visulization 2: Deeper look into Hunter 2016 Study\n\nSELECT \n  Subjects.AgeCategoryFirstMeasurement AS AgeCategory, \n  Measurements.Frequency, \n  AVG(Measurements.Absorbance) AS MeanAbsorbance\nFROM Measurements\nJOIN Subjects ON Measurements.SubjectNumber = Subjects.SubjectNumber\nWHERE Measurements.Identifier = 'Hunter_2016' \n  AND Measurements.Frequency &gt;= 200  -- Apply frequency filter in SQL\nGROUP BY Subjects.AgeCategoryFirstMeasurement, Measurements.Frequency;"
+  },
+  {
+    "objectID": "DS_Presentation.html#thanks-for-listening",
+    "href": "DS_Presentation.html#thanks-for-listening",
+    "title": "Data Science Final Presentation",
+    "section": "Thanks For Listening!",
+    "text": "Thanks For Listening!"
   }
 ]
