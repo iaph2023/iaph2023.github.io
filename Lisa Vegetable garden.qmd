@@ -21,7 +21,7 @@ This project showcases my first time using the introductory tidyverse data visua
 The dataset used in this project, **Lisa's Vegetable Garden**, is sourced from [Tidy Tuesday's May 28, 2024 release](https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-05-28/readme.md).
 
 
-The Lisa's Vegetable Garden dataset contains detailed records of Lisa Lendway's vegetable garden from the summers of 2020 and 2021. The data includes planting, harvesting, and spending details, offering insights into gardening practices and changes between the two years. Originally used in her Introduction to Data Science course at Macalester College, the dataset provides a hands-on way to explore data science concepts.
+The Lisa's Vegetable Garden data set contains detailed records of Lisa Lendway's vegetable garden from the summers of 2020 and 2021. The data includes planting, harvesting, and spending details, offering insights into gardening practices and changes between the two years. Originally used in her Introduction to Data Science course at Macalester College, the data set provides a hands-on way to explore data science concepts.
 
 Tidy Tuesday is a weekly R project encouraging data wrangling, visualization, and sharing insights with the #TidyTuesday community.
 
@@ -40,7 +40,7 @@ spending_2021 <- tuesdata$spending_2021
 ```
 
 
-Here is a quick glimpse of the data contained in the harvest_2020 dataset.
+Here is a quick glimpse of the data contained in the harvest_2020 data set.
 ```{r}
 head(harvest_2020,5)
 

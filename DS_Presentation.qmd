@@ -374,7 +374,7 @@ GROUP BY Measurements.Identifier, Measurements.Instrument, PI_Info.AuthorsShortL
 
 
 ## Visulization 1: Recreating Voss Graph
-```{r}
+```{r, out.width= "80%", out.hight= "75%", fig.align='center'}
 #| echo: false
 #| eval: true
 ggplot(data, aes(x = Frequency, y = MeanAbsorbance, color = Legend_Label)) +
@@ -419,7 +419,7 @@ GROUP BY Subjects.AgeCategoryFirstMeasurement, Measurements.Frequency;
 
 ## Visulization 2: Deeper look into Hunter 2016 Study
 
-```{r, fig.height=9, fig.width=8}
+```{r, fig.height=9, fig.width=8, out.width= "80%", out.hight= "75%", fig.align='center'}
 #| echo: false
 #| eval: true
 ggplot(age_data_Hunter_2016, aes(x = Frequency, y = MeanAbsorbance, color = AgeCategory)) +

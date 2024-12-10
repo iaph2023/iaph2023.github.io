@@ -1,5 +1,5 @@
 ---
-title: "Project 4 - SQL"
+title: "SQL Analysis of WAI Database"
 author: "Ian Palmer"
 Date: 11/17/2024
 execute: 
@@ -36,6 +36,8 @@ Addtionally, I will provide the sources for both the Abur 2014 and Hunter 2016 a
 
 Establish connection to the database and also create variables for needed tables for ease of use. 
 ```{r}
+#| echo: false
+#| eval: true
 #Establish Connection
 library(RMariaDB)
 library(tidyverse)

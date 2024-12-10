@@ -16,11 +16,11 @@ website:
            href: Lisa Vegetable garden.html
          - text: "Carbon Emissions"
            href: Carbon Emissions.html
-         - text: "Project 2"
+         - text: "Netflix Titles Analysis"
            href: Mini Project 2 copy.html
-         - text: "Project 3"
+         - text: "SQL Analysis of WAI Database"
            href: MiniProject3.html
-         - text: "Project 4"
+         - text: "SQL Analysis of WAI Database"
            href: Project4_SQL.html
       - text: "Presentations"
         menu: 

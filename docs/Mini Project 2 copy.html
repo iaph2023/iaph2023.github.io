@@ -9,7 +9,7 @@
 <meta name="author" content="Ian Palmer">
 <meta name="dcterms.date" content="2024-10-02">
 
-<title>iaph2023.github.io - Mini Project 2</title>
+<title>iaph2023.github.io - Netflix Titles Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -147,15 +147,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="./Mini Project 2 copy.html">
- <span class="dropdown-text">Project 2</span></a>
+ <span class="dropdown-text">Netflix Titles Analysis</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./MiniProject3.html">
- <span class="dropdown-text">Project 3</span></a>
+ <span class="dropdown-text">SQL Analysis of WAI Database</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./Project4_SQL.html">
- <span class="dropdown-text">Project 4</span></a>
+ <span class="dropdown-text">SQL Analysis of WAI Database</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-presentations" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Presentations</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-presentations">    
+        <li>
+    <a class="dropdown-item" href="./DS_Presentation.html">
+ <span class="dropdown-text">Data Science Projects Presentation</span></a>
   </li>  
     </ul>
   </li>
@@ -178,7 +189,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Mini Project 2</h1>
+<h1 class="title">Netflix Titles Analysis</h1>
 </div>
 
 
@@ -207,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This is my second project which centers on analyzing the Netflix Titles dataset. The focus in this project is to utilize piping to better organize the data. In this project I made three different visualizations. The dataset provides insights into the types of content (movies and TV shows), their release years, associated metadata (e.g., directors, actors, countries of production), and trends across the Netflix platform.</p>
+<p>This is my second project which centers on analyzing the Netflix Titles data set. The focus in this project is to utilize piping to better organize the data. In this project I made three different visualizations. The data set provides insights into the types of content (movies and TV shows), their release years, associated metadata (e.g., directors, actors, countries of production), and trends across the Netflix platform.</p>
 <p>This analysis uses data from the <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-04-20/readme.md">Netflix Titles Data Source</a>, which is available through the TidyTuesday github repository.</p>
 <p><em>Exploratory Data Analysis</em><br> To introduce the dataset, I begin with a simple exploration of key variables:</p>
 <div class="cell">
@@ -228,7 +239,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 3 more variables: duration &lt;chr&gt;, listed_in &lt;chr&gt;, description &lt;chr&gt;</code></pre>
 </div>
 </div>
-<p>A quick overview of the dataset reveals that the majority of content is categorized as either “Movies” or “TV Shows.” Below is a bar chart illustrating the distribution:</p>
+<p>A quick overview of the data set reveals that the majority of content is categorized as either “Movies” or “TV Shows.” Below is a bar chart illustrating the distribution:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Distribution of content type</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>netflix_type_count <span class="ot">&lt;-</span> netflix <span class="sc">|&gt;</span></span>
@@ -464,7 +475,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>My early prediction of “love”, “life”, “world” all being popular words in titles turned out to be true. However, “death” did not make the top 10.</p>
-<p><em>Conclusion</em><br> This project was a great opportunity to practice and build my string manipulation and regular expression skills. By working with the Netflix Titles dataset, I applied several str_*() functions and regular expressions to clean and analyze text data, which was a valuable hands-on experience in managing and extracting important information from more unstructured data. Creating visualizations helped reinforce the importance of organizing data effectively for clear storytelling and making results accessible. This project also revealed some interesting trends in Netflix’s content catalog. The analysis revealed that Netflix’s library is dominated by modern content, with movies significantly outnumbering TV shows. Common themes in titles included “love,” “life,” and “world,” while “death” was less frequent. Indian actors appeared frequently compared to the smaller number of Indian movies, highlighting unique industry dynamics.</p>
+<p><em>Conclusion</em><br> This project was a great opportunity to practice and build my string manipulation and regular expression skills. By working with the Netflix Titles data set, I applied several str_*() functions and regular expressions to clean and analyze text data, which was a valuable hands-on experience in managing and extracting important information from more unstructured data. Creating visualizations helped reinforce the importance of organizing data effectively for clear storytelling and making results accessible. This project also revealed some interesting trends in Netflix’s content catalog. The analysis revealed that Netflix’s library is dominated by modern content, with movies significantly outnumbering TV shows. Common themes in titles included “love,” “life,” and “world,” while “death” was less frequent. Indian actors appeared frequently compared to the smaller number of Indian movies, highlighting unique industry dynamics.</p>
 
 
 
