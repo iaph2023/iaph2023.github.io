@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Ian Palmer">
+<meta name="dcterms.date" content="2024-09-18">
+<meta name="description" content="Analysis of Lisa Vegetable Garden data from TidyTuesday">
 
-<title>iaph2023.github.io - Ian’s Website</title>
+<title>iaph2023.github.io - Lisa Vegetable Garden</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -33,6 +70,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
@@ -70,7 +108,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -88,7 +126,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -114,7 +152,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
         <li>
     <a class="dropdown-item" href="./MiniProject3.html">
- <span class="dropdown-text">NCAA Homecourt Advantage</span></a>
+ <span class="dropdown-text">SQL Analysis of WAI Database</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./Project4_SQL.html">
@@ -144,37 +182,128 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
 <!-- main -->
-<div class="quarto-about-jolla content">
-  <img src="Picture.jpeg" class="about-image
-  round " style="height: 17em; width: 17em;">
- <header id="title-block-header" class="quarto-title-block default">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Ian’s Website</h1>
+<h1 class="title">Lisa Vegetable Garden</h1>
 </div>
-<div class="quarto-title-meta">
+
+<div>
+  <div class="description">
+    <p>Analysis of Lisa Vegetable Garden data from TidyTuesday</p>
   </div>
-</header><main class="content" id="quarto-document-content">
-<p>Welcome to my website! Click the links down below for more information.</p>
-<p>Biography: I am a sophomore at Pomona College intending to double major in Economics and Math, while also pursuing a minor in Data Science. I am also on the Pomona College swim team. I am originally from the San Francisco East Bay Area.</p>
+</div>
 
 
-</main> 
-  <hr class="about-sep">
-   <div class="about-links">
-  <a href="https://www.linkedin.com/in/ian-palmer-902704293/" class="about-link" rel="" target="">
-     <span class="about-link-text">LinkedIn</span>
-  </a>
-  <a href="https://github.com/iaph2023" class="about-link" rel="" target="">
-     <span class="about-link-text">GitHub</span>
-  </a>
-  <a href="/iaph2023@mymail.pomona.edu" class="about-link" rel="" target="">
-     <span class="about-link-text">Email</span>
-  </a>
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ian Palmer </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 18, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This project showcases my first time using the introductory tidyverse data visualization skills that I learned in my data science course. In this section I looked at the Lisa Vegetable Garden data set from tidytuesday. I aimed to explore the data set and create a visualization using the data.</p>
+<p>The dataset used in this project, <strong>Lisa’s Vegetable Garden</strong>, is sourced from <a href="https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-05-28/readme.md">Tidy Tuesday’s May 28, 2024 release</a>.</p>
+<p>The Lisa’s Vegetable Garden data set contains detailed records of Lisa Lendway’s vegetable garden from the summers of 2020 and 2021. The data includes planting, harvesting, and spending details, offering insights into gardening practices and changes between the two years. Originally used in her Introduction to Data Science course at Macalester College, the data set provides a hands-on way to explore data science concepts.</p>
+<p>Tidy Tuesday is a weekly R project encouraging data wrangling, visualization, and sharing insights with the #TidyTuesday community.</p>
+<p>Here is the dataset that I used:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="dv">2024</span>, <span class="at">week =</span> <span class="dv">22</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>harvest_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>harvest_2020</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>harvest_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>harvest_2021</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>planting_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>planting_2020</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>planting_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>planting_2021</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>spending_2020 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>spending_2020</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>spending_2021 <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>spending_2021</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here is a quick glimpse of the data contained in the harvest_2020 data set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(harvest_2020,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  vegetable variety          date       weight units
+  &lt;chr&gt;     &lt;chr&gt;            &lt;date&gt;      &lt;dbl&gt; &lt;chr&gt;
+1 lettuce   reseed           2020-06-06     20 grams
+2 radish    Garden Party Mix 2020-06-06     36 grams
+3 lettuce   reseed           2020-06-08     15 grams
+4 lettuce   reseed           2020-06-09     10 grams
+5 radish    Garden Party Mix 2020-06-11     67 grams</code></pre>
 </div>
 </div>
- <!-- /main -->
+<p>This code chuck creates a new data set called harvest_2020_avg which I use in my visualization later. I find the average harvest weight across all months in the 2020 harvest season.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new dataset with average harvest weight per month</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>harvest_2020_avg <span class="ot">&lt;-</span> harvest_2020 <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add a new column 'month', extracting the year and month from the 'date' column</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">as.Date</span>(<span class="fu">format</span>(<span class="fu">as.Date</span>(date), <span class="st">"%Y-%m-01"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Group the data by the 'month' column</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the average weight for each month, ignoring missing values (NA)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_weight =</span> <span class="fu">mean</span>(weight, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the resulting dataset</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>harvest_2020_avg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  month      avg_weight
+  &lt;date&gt;          &lt;dbl&gt;
+1 2020-06-01       78.8
+2 2020-07-01      219. 
+3 2020-08-01      473. 
+4 2020-09-01     1128. 
+5 2020-10-01      959. </code></pre>
+</div>
+</div>
+<p>Below you can see my code and data visualization of Lisa’s Vegetable Garden. The graph represents the average weight of vegetables harvested during each month of the 2020 harvest.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a line plot of average vegetable weights harvested per month</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(harvest_2020_avg, <span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> avg_weight)) <span class="sc">+</span>  <span class="co"># Set up ggplot with dataset and aesthetic mappings</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span>  <span class="co"># Add a line connecting the average weights for each month</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>  <span class="co"># Add points at each month's average weight for emphasis</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Average Weight of Vegetables Harvested per Month in 2020 Season"</span>,  <span class="co"># Set the plot title</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Month"</span>,  <span class="co"># Label for the x-axis (Month)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average Weight (grams)"</span>  <span class="co"># Label for the y-axis (Average Weight in grams)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lisa_Vegetable_garden_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" alt="This line graph shows the average weight of vegetables harvested per month during the 2020 season. The x-axis represents the months (June to October), and the y-axis represents the average weight of the harvest in grams. The trend line starts low in June, rises steadily through July and August, peaks in September, and then slightly declines in October. Each data point is marked with a dot connected by straight lines." width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As we can see, the graph shows the average weight of vegetables harvested per month during the 2020 season. Harvest weights increased steadily from June, peaked in September, and then slightly declined in October, highlighting a clear seasonal trend in vegetable yields.</p>
+
+
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -195,6 +324,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
   const isCodeAnnotation = (el) => {
     for (const clz of el.classList) {
       if (clz.startsWith('code-annotation-')) {                     

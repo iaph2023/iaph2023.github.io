@@ -7,15 +7,11 @@ execute:
   message: false
 ---
 
-
 This is my second project which centers on analyzing the Netflix Titles data set. The focus in this project is to utilize piping to better organize the data. In this project I made three different visualizations. The data set provides insights into the types of content (movies and TV shows), their release years, associated metadata (e.g., directors, actors, countries of production), and trends across the Netflix platform.
-
 
 This analysis uses data from the [Netflix Titles Data Source](https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-04-20/readme.md), which is available through the TidyTuesday github repository.
 
-
-*Exploratory Data Analysis*<br>
-To introduce the dataset, I begin with a simple exploration of key variables:
+*Exploratory Data Analysis*<br> To introduce the dataset, I begin with a simple exploration of key variables:
 
 ```{r, message=FALSE, warning=FALSE}
 
@@ -26,11 +22,7 @@ netflix <- tuesdata$netflix
 head(netflix,5)
 ```
 
-
-
 A quick overview of the data set reveals that the majority of content is categorized as either “Movies” or “TV Shows.” Below is a bar chart illustrating the distribution:
-
-
 
 ```{r, fig.alt= "A bar chart comparing the count of movies and TV shows on Netflix. Movies significantly outnumber TV shows."}
 
@@ -48,15 +40,9 @@ ggplot(netflix_type_count, aes(x = type, y = n, fill = type)) +
 
 ```
 
-
-
 Here we can see data frames for the amount of movies and TV shows on Netflix from each release year and the amount of Movies and TV shows on Netflix. We can see that there are around double the amount of movies compared to TV shows. There seems to be a trend of more modern TV shows and movies on Netflix.
 
-
-
-*Content Trends Over Time*<br>
-Analyzing release years shows a clear trend: Netflix’s library is heavily skewed toward modern content, with the majority of titles released after 2000. The following line chart visualizes the distribution of release years:
-
+*Content Trends Over Time*<br> Analyzing release years shows a clear trend: Netflix’s library is heavily skewed toward modern content, with the majority of titles released after 2000. The following line chart visualizes the distribution of release years:
 
 ```{r, fig.alt= "A line chart showing the distribution of Netflix content release years. Titles released after 2000 dominate the platform."}
 # Distribution of release years
@@ -73,9 +59,7 @@ ggplot(netflix_year_count, aes(x = release_year, y = n)) +
   )
 ```
 
-
 From the line chart we can see that movies after 2000 dominate Netflix's discography.
-
 
 Next I attempted to explore linguistic patterns in Netflix titles. I used str functions str_detect() and str_to_lower() to look for a popular word. Used regular expression "love" to look for the word love in movie and TV titles.
 
@@ -88,8 +72,6 @@ love_count <- netflix |>
 love_count
 ```
 
-
-
 Uses regular expression "life\|world\|death" to search for more possible popular words in move/tv show titles.
 
 ```{r}
@@ -101,9 +83,6 @@ head(keywords_titles,10)
 
 
 ```
-
-
-
 
 Then I proceeded to create a count for each of the selected words.
 
@@ -124,11 +103,7 @@ word_count
 
 ```
 
-
-
-
 The following code chucks perform three different tasks of counting occurrences of directors, actors, and countries, and then displaying the top 10 most popular in each category. It filters out missing or empty values and splits data where necessary (such as for actors and countries with multiple entries separated by commas).
-
 
 ```{r}
 
@@ -163,10 +138,7 @@ popular_countries <- netflix |>
 head(popular_countries, 10)
 ```
 
-
 It was very interesting to see the large amount of Indian actors appearing in tv shows/movies compared to the total amount of Indian movies. Perhaps there is a fewer supply of popular actors in Bollywood compared to Hollywood in the United States.
-
-
 
 Finally, I created a table that has the top 10 most popular words in Netflix titles. I excluded common conjunction words such as "the", "and", or "of". I also used the regular expressions \\d and \\s+ to filter out digits and whitespace.
 
@@ -195,9 +167,6 @@ head(popular_words, 10)
 
 ```
 
-
-
-
 Lastly, I created a bar chart from the previous data frame in order to visulize the top 10 most common words in Netflix titles.
 
 ```{r, fig.alt= "Bar chart titled “Top 10 Most Common Words in Netflix Titles,” showing the words “love,” “my,” and “Christmas” as the top three, with “love” having the highest frequency. Bars are green, with frequency on the x-axis and words on the y-axis."}
@@ -212,10 +181,6 @@ popular_words |>
        y = "Frequency")
 ```
 
-
 My early prediction of "love", "life", "world" all being popular words in titles turned out to be true. However, "death" did not make the top 10.
 
-
-*Conclusion*<br>
-This project was a great opportunity to practice and build my string manipulation and regular expression skills. By working with the Netflix Titles data set, I applied several str_*() functions and regular expressions to clean and analyze text data, which was a valuable hands-on experience in managing and extracting important information from more unstructured data. Creating visualizations helped reinforce the importance of organizing data effectively for clear storytelling and making results accessible. This project also revealed some interesting trends in Netflix’s content catalog. The analysis revealed that Netflix’s library is dominated by modern content, with movies significantly outnumbering TV shows. Common themes in titles included "love," "life," and "world," while "death" was less frequent. Indian actors appeared frequently compared to the smaller number of Indian movies, highlighting unique industry dynamics.
-
+*Conclusion*<br> This project was a great opportunity to practice and build my string manipulation and regular expression skills. By working with the Netflix Titles data set, I applied several str\_\*() functions and regular expressions to clean and analyze text data, which was a valuable hands-on experience in managing and extracting important information from more unstructured data. Creating visualizations helped reinforce the importance of organizing data effectively for clear storytelling and making results accessible. This project also revealed some interesting trends in Netflix’s content catalog. The analysis revealed that Netflix’s library is dominated by modern content, with movies significantly outnumbering TV shows. Common themes in titles included "love," "life," and "world," while "death" was less frequent. Indian actors appeared frequently compared to the smaller number of Indian movies, highlighting unique industry dynamics.

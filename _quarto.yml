@@ -13,12 +13,12 @@ website:
       - text: "Data Viz"
         menu: 
          - text: "Lisa's Vegetable Garden"
-           href: Lisa Vegetable garden.html
+           href: Lisa_Vegetable_garden.html
          - text: "Carbon Emissions"
-           href: Carbon Emissions.html
+           href: Carbon_Emissions.html
          - text: "Netflix Titles Analysis"
-           href: Mini Project 2 copy.html
-         - text: "SQL Analysis of WAI Database"
+           href: Mini_Project_2_copy.html
+         - text: "NCAA Homecourt Advantage"
            href: MiniProject3.html
          - text: "SQL Analysis of WAI Database"
            href: Project4_SQL.html

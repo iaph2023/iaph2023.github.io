@@ -14,7 +14,6 @@ execute:
 library(tidyverse)
 ```
 
-
 This project showcases my use of tidyverse data wrangling and visualization skills. In this section, I analyze the Carbon Emissions dataset from TidyTuesday to explore trends in emissions over time and create a visualization.
 
 The dataset used in this project, **Carbon Emissions**, is sourced from [Tidy Tuesday's May 21, 2024 release](https://github.com/rfordatascience/tidytuesday/blob/main/data/2024/2024-05-21/readme.md).
@@ -23,14 +22,13 @@ The Carbon Emissions dataset includes historical emissions data compiled by Carb
 
 Tidy Tuesday is a weekly R project encouraging data exploration, visualization, and sharing insights with the #TidyTuesday community.
 
-
 Here is the data set that I used:
+
 ```{r, message=FALSE, warning=FALSE}
 tuesdata <- tidytuesdayR::tt_load(2024, week = 21)
 
 emissions <- tuesdata$emissions
 ```
-
 
 Below is a quick glimpse of the data contained in the emissions dataset:
 
@@ -52,12 +50,7 @@ summary_data
 
 ```
 
-
-
-
-
 Below you can see my code and data visualization of Carbon Emissions overtime in America. The graph shows the increase in Carbon Emissions from 1850-Present Day.
-
 
 ```{r, fig.alt= "This scatter plot shows average carbon emissions per year from 1850 to the present day. The x-axis represents the year, while the y-axis represents the average carbon emissions in million tonnes of CO2 equivalent (MtCO2e). The data points are marked as black dots, and a blue smooth trend line highlights the overall upward trajectory of emissions, with a steep increase starting around the mid-20th century and continuing to rise in recent decades."}
 
