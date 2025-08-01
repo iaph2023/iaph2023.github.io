@@ -1,0 +1,589 @@
+---
+title: "Analyzing the Macroeconomic Impact of Quantitative Easing: A Pre- and Post-2008 Financial Crisis Study"
+author: "Ian Palmer & Conner Fitzgerald"
+Date: 12/13/2024
+format: html
+execute: 
+  warning: false
+  message: false
+---
+
+# Research Introduction
+
+## Background
+
+Quantitative Easing (QE) is an interesting monetary policy tool employed by the Federal Reserve to mitigate the effects of economic downturns, especially in the aftermath of the 2008 financial crisis. QE involves large-scale asset purchases designed to increase liquidity, lower borrowing costs, and stimulate economic activity. However, its long-term implications for macroeconomic performance remain a subject of extensive debate.
+
+This project examines the impact of QE on key macroeconomic indicators in the United States, focusing on two distinct periods: the Pre-QE era (1998–2008) and the QE era (2008–2018). By comparing these periods, this analysis aims to determine how QE policies influenced real GDP growth, inflation, interest rates, and unemployment, and to what extent the relationships between these variables were altered.
+
+## **Research Questions**
+
+To what extent did Quantitative Easing (QE) policies influence macroeconomic performance in the United States, particularly in terms of GDP growth, inflation, interest rates, and unemployment, during and after the 2008 financial crisis?
+
+## **Hypotheses**
+
+H1: QE positively impacted GDP growth by reducing borrowing costs and increasing liquidity.
+
+H2: QE created a stronger inverse relationship between money supply and interest rates.
+
+H3: QE had diminishing returns over time, with effects weakening as the program expanded.
+
+## Methodology Overview
+
+1.  Collect macroeconomic data (GDP, money supply, interest rates, inflation, unemployment) from FRED.
+2.  Clean and preprocess the data, calculating relevant growth rates.
+3.  Perform time series visualizations to compare Pre-QE and QE periods.
+4.  Conduct regression analysis to evaluate relationships between key variables.
+5.  Simulate QE effects using the Solow-Swan model.
+6.  Interpret results in relation to macroeconomic theory and policy impacts.
+
+------------------------------------------------------------------------
+
+## **Data Collection**
+
+This section outlines the retrieval of key economic data from the Federal Reserve Economic Data (FRED) API for the period between 2000 and 2018. The data includes:
+
+-   Real GDP
+-   Money Supply (M2)
+-   Federal Funds Interest Rate
+-   Consumer Price Index (CPI)
+-   GDP Deflator
+-   Unemployment Rate
+
+These variables will be analyzed for pre-QE (1998–2008) and post-QE (2008–2018) periods to evaluate the impact of QE policies.
+
+### **Setting Up the Environment**
+
+```{r}
+library(fredr)
+library(tidyverse)
+
+# Set FRED API key
+fredr_set_key("945073b6cb99bb8960b46f19871b939f")
+
+# Define two time periods
+pre_qe_start <- as.Date("1998-01-01")
+pre_qe_end <- as.Date("2008-12-31")
+post_qe_start <- as.Date("2008-01-01")
+post_qe_end <- as.Date("2018-12-31")
+
+```
+
+### **Fetching Pre-QE Data**
+
+This block retrieves the economic data for the pre-QE period (1998–2008):
+
+```{r}
+# Pre-QE Data
+gdp_pre <- fredr(series_id = "GDPC1", observation_start = pre_qe_start, observation_end = pre_qe_end) |>
+  select(date, value) |>
+  rename(gdp = value)
+
+money_supply_pre <- fredr(series_id = "M2SL", observation_start = pre_qe_start, observation_end = pre_qe_end) |>
+  select(date, value) |>
+  rename(money_supply = value)
+
+interest_rate_pre <- fredr(series_id = "FEDFUNDS", observation_start = pre_qe_start, observation_end = pre_qe_end) |>
+  select(date, value) |>
+  rename(interest_rate = value)
+
+inflation_pre <- fredr(series_id = "CPIAUCSL", observation_start = pre_qe_start, observation_end = pre_qe_end) |>
+  select(date, value) |>
+  rename(inflation = value)
+
+gdp_deflator_pre <- fredr(series_id = "GDPDEF", observation_start = pre_qe_start, observation_end = pre_qe_end) |>
+  select(date, value) |>
+  rename(gdp_deflator = value)
+
+unemployment_pre <- fredr(series_id = "UNRATE", observation_start = pre_qe_start, observation_end = pre_qe_end) |>
+  select(date, value) |>
+  rename(unemployment_rate = value)
+
+# Combine pre-QE data into one data frame
+data_pre <- gdp_pre |>
+  left_join(money_supply_pre, by = "date") |>
+  left_join(interest_rate_pre, by = "date") |>
+  left_join(inflation_pre, by = "date") |>
+  left_join(gdp_deflator_pre, by = "date") |>
+  left_join(unemployment_pre, by = "date") |>
+  arrange(date) |>
+  na.omit()
+
+```
+
+### **Fetching Post-QE Data**
+
+This block retrieves the economic data for the post-QE period (2008–2018):
+
+```{r}
+# Post-QE Data
+gdp_post <- fredr(series_id = "GDPC1", observation_start = post_qe_start, observation_end = post_qe_end) |>
+  select(date, value) |>
+  rename(gdp = value)
+
+money_supply_post <- fredr(series_id = "M2SL", observation_start = post_qe_start, observation_end = post_qe_end) |>
+  select(date, value) |>
+  rename(money_supply = value)
+
+interest_rate_post <- fredr(series_id = "FEDFUNDS", observation_start = post_qe_start, observation_end = post_qe_end) |>
+  select(date, value) |>
+  rename(interest_rate = value)
+
+inflation_post <- fredr(series_id = "CPIAUCSL", observation_start = post_qe_start, observation_end = post_qe_end) |>
+  select(date, value) |>
+  rename(inflation = value)
+
+gdp_deflator_post <- fredr(series_id = "GDPDEF", observation_start = post_qe_start, observation_end = post_qe_end) |>
+  select(date, value) |>
+  rename(gdp_deflator = value)
+
+unemployment_post <- fredr(series_id = "UNRATE", observation_start = post_qe_start, observation_end = post_qe_end) |>
+  select(date, value) |>
+  rename(unemployment_rate = value)
+
+# Combine post-QE data into one data frame
+data_post <- gdp_post |>
+  left_join(money_supply_post, by = "date") |>
+  left_join(interest_rate_post, by = "date") |>
+  left_join(inflation_post, by = "date") |>
+  left_join(gdp_deflator_post, by = "date") |>
+  left_join(unemployment_post, by = "date") |>
+  arrange(date) |>
+  na.omit()
+
+```
+
+### **Creating Growth Variables**
+
+Growth variables (e.g., real GDP growth, money supply growth, inflation rate) are calculated for both pre-QE and post-QE periods:
+
+```{r}
+# Create growth and rate variables for pre-QE data
+data_pre <- data_pre |>
+  mutate(
+    real_gdp_growth = (gdp / lag(gdp) - 1) * 100,
+    money_supply_growth = (money_supply / lag(money_supply) - 1) * 100,
+    inflation_rate = (inflation / lag(inflation) - 1) * 100
+  )
+
+# Create growth and rate variables for post-QE data
+data_post <- data_post |>
+  mutate(
+    real_gdp_growth = (gdp / lag(gdp) - 1) * 100,
+    money_supply_growth = (money_supply / lag(money_supply) - 1) * 100,
+    inflation_rate = (inflation / lag(inflation) - 1) * 100
+  )
+
+
+```
+
+------------------------------------------------------------------------
+
+## **Time Series Analysis**
+
+Now that we have created our data frame, we can move forward with an exploratory time series analysis of both periods. This will allow us to visualize key macroeconomic indicators before and after the 2008 financial crisis and subsequent quantitative easing policy. Trends are analyzed to understand the potential impacts of QE policies.
+
+### **Real GDP and Money Supply**
+
+#### Visualization
+
+The following graphs illustrate the trends in real GDP and money supply over two distinct periods: before and after the implementation of quantitative easing (QE). The x-axis represents the years within the respective time periods, while the y-axis represents the values of real GDP (in billions) and money supply (in billions). In the post-QE graph, vertical dashed lines indicate the start dates of QE1, QE2, and QE3, as marked in red, blue, and green, respectively. These indicators provide a reference for analyzing the potential impacts of QE on these economic variables.
+
+```{r}
+# Pre-QE Plot
+ggplot(data_pre, aes(x = date)) +
+  geom_line(aes(y = gdp, color = "Real GDP")) +
+  geom_line(aes(y = money_supply, color = "Money Supply")) +
+  labs(title = "Real GDP and Money Supply (Pre-QE)", x = "Year", y = "Value") +
+  scale_color_manual(values = c("Real GDP" = "blue", "Money Supply" = "orange")) +
+  theme_minimal()
+
+ggplot(data_post, aes(x = date)) +
+  geom_line(aes(y = gdp, color = "Real GDP")) +
+  geom_line(aes(y = money_supply, color = "Money Supply")) +
+  geom_vline(xintercept = as.Date("2008-11-01"), linetype = "dashed", color = "red", size = 0.8) +
+  geom_vline(xintercept = as.Date("2010-11-03"), linetype = "dashed", color = "blue", size = 0.8) +
+  geom_vline(xintercept = as.Date("2012-09-13"), linetype = "dashed", color = "green", size = 0.8) +
+  annotate("text", x = as.Date("2008-11-01"), y = max(data_post$gdp), label = "QE1", color = "red", angle = 90, vjust = -0.5) +
+  annotate("text", x = as.Date("2010-11-03"), y = max(data_post$gdp), label = "QE2", color = "blue", angle = 90, vjust = -0.5) +
+  annotate("text", x = as.Date("2012-09-13"), y = max(data_post$gdp), label = "QE3", color = "green", angle = 90, vjust = -0.5) +
+  labs(
+    title = "Post-QE Real GDP and Money Supply with QE Indicators",
+    x = "Year",
+    y = "Value",
+    color = "Legend"
+  ) +
+  scale_color_manual(values = c("Real GDP" = "blue", "Money Supply" = "orange")) +
+  theme_minimal()
+
+
+```
+
+## Real GDP and Money Supply Analysis: <br>
+
+### Pre-QE Graph: <br>
+
+The graph shows steady growth in both real GDP and money supply from 1998 to 2008. There is no indication of any major disruptions, and both variables exhibit consistent upward trends.
+
+### Post-QE Graph:
+
+The post-QE graph demonstrates an upward trend in both real GDP and money supply from 2008 to 2018. However, the QE periods are marked by steeper increases in the money supply, particularly during the initial QE1 phase.
+
+### Comparison:<br>
+
+The pre-QE period displays a smooth, consistent growth trajectory for both real GDP and money supply, reflecting stability in the absence of QE. In contrast, the post-QE period exhibits a more rapid and volatile growth pattern for the money supply, likely driven by the Federal Reserve's interventions. Real GDP growth also recovers following the recession in 2008 but at a slower pace compared to the rapid increase in the money supply.
+
+------------------------------------------------------------------------
+
+### **Inflation (CPI) Time Series (Pre-QE and Post-QE):** <br>
+
+The following graphs present the consumer price index (CPI) as a proxy for inflation over two distinct periods: before and after the implementation of QE. The x-axis represents the years within the respective time periods, and the y-axis represents the CPI value. The post-QE graph includes vertical dashed lines marking the start dates of QE1, QE2, and QE3, providing a temporal reference for evaluating the impacts of QE on inflation trends.
+
+```{r}
+# Pre-QE Inflation
+ggplot(data_pre, aes(x = date, y = inflation)) +
+  geom_line(color = "blue") +
+  labs(title = "Pre-QE CPI", x = "Year", y = "CPI") +
+  theme_minimal()
+
+
+#Post-QE Inflation, With QE indicators
+ggplot(data_post, aes(x = date, y = inflation)) +
+  geom_line(color = "blue") +
+  geom_vline(xintercept = as.Date("2008-11-01"), linetype = "dashed", color = "red", size = 0.8) +
+  geom_vline(xintercept = as.Date("2010-11-03"), linetype = "dashed", color = "blue", size = 0.8) +
+  geom_vline(xintercept = as.Date("2012-09-13"), linetype = "dashed", color = "green", size = 0.8) +
+  annotate("text", x = as.Date("2008-11-01"), y = max(data_post$inflation, na.rm = TRUE), label = "QE1", color = "red", angle = 90, vjust = -0.5) +
+  annotate("text", x = as.Date("2010-11-03"), y = max(data_post$inflation, na.rm = TRUE), label = "QE2", color = "blue", angle = 90, vjust = -0.5) +
+  annotate("text", x = as.Date("2012-09-13"), y = max(data_post$inflation, na.rm = TRUE), label = "QE3", color = "green", angle = 90, vjust = -0.5) +
+  labs(
+    title = "Post-QE CPI",
+    x = "Year",
+    y = "CPI"
+  ) +
+  theme_minimal()
+
+
+```
+
+### Inflation (CPI) Analysis
+
+### Pre-QE Graph:
+
+Inflation, as measured by CPI, rises steadily from 1998 to 2008. There are no significant fluctuations, indicating stable inflationary trends during this period.
+
+#### Post-QE Graph:
+
+The CPI increases moderately post-2008 but exhibits some fluctuations, particularly during the QE1 period. After QE3, inflation stabilizes and follows a steady upward trend.
+
+#### Comparison:
+
+Both periods show an upward trend in inflation. However, the post-QE period demonstrates slightly more variability, particularly during the early QE phases. This suggests that while QE may have helped prevent deflation, it may have also introduced minor short-term volatility in inflation.
+
+------------------------------------------------------------------------
+
+# Interest Rate Time Series (Pre-QE and Post-QE): <br>
+
+The following graphs depict the trends in the federal funds interest rate over the pre-QE and post-QE periods. The x-axis represents the years, and the y-axis represents the interest rate percentage. In the post-QE graph, vertical dashed lines mark the start of QE1, QE2, and QE3, providing context for the Federal Reserve's interest rate adjustments during the quantitative easing era.
+
+```{r}
+# Pre-QE Interest Rates
+ggplot(data_pre, aes(x = date, y = interest_rate)) +
+  geom_line(color = "blue") +
+  labs(title = "Pre QE Federal Funds Rate", x = "Year", y = "Interest Rate (%)") +
+  theme_minimal()
+
+# Post-QE Interest Rates
+ggplot(data_post, aes(x = date, y = interest_rate)) +
+  geom_line(color = "blue", size = 1) +
+  geom_vline(xintercept = as.Date("2008-11-01"), linetype = "dashed", color = "red", size = 0.8) +
+  geom_vline(xintercept = as.Date("2010-11-03"), linetype = "dashed", color = "blue", size = 0.8) +
+  geom_vline(xintercept = as.Date("2012-09-13"), linetype = "dashed", color = "green", size = 0.8) +
+  annotate("text", x = as.Date("2008-11-01"), y = max(data_post$interest_rate, na.rm = TRUE), label = "QE1", color = "red", angle = 90, vjust = -0.5) +
+  annotate("text", x = as.Date("2010-11-03"), y = max(data_post$interest_rate, na.rm = TRUE), label = "QE2", color = "blue", angle = 90, vjust = -0.5) +
+  annotate("text", x = as.Date("2012-09-13"), y = max(data_post$interest_rate, na.rm = TRUE), label = "QE3", color = "green", angle = 90, vjust = -0.5) +
+  labs(
+    title = "Post-QE Federal Funds Rate",
+    x = "Year",
+    y = "Interest Rate (%)"
+  ) +
+  theme_minimal()
+
+
+```
+
+### Interest Rate Analysis:
+
+#### Pre-QE Graph:
+
+Interest rates fluctuate significantly from 1998 to 2008, reflecting traditional monetary policy adjustments. Rates generally decline from 2000 to 2004, increase until 2006, and then drop sharply leading up to 2008.
+
+#### Post-QE Graph:
+
+Interest rates remain near zero following QE1 and stay low throughout the post-QE period until rising modestly near 2016, reflecting gradual policy normalization.
+
+#### Comparison:
+
+The pre-QE period shows more frequent and substantial changes in interest rates, indicative of traditional monetary policy interventions. In contrast, the post-QE period is characterized by persistently low rates, reflecting the unconventional monetary policies implemented during and after the financial crisis.
+
+------------------------------------------------------------------------
+
+### **Unemployment Rate Time Series (Pre-QE and Post-QE):** <br>
+
+The following graphs display the unemployment rate trends over the pre-QE and post-QE periods. The x-axis represents the years, and the y-axis represents the unemployment rate as a percentage. The post-QE graph includes vertical dashed lines marking the start dates of QE1, QE2, and QE3 to highlight their temporal impact.
+
+```{r}
+#Pre-QE unemployment rate
+ggplot(data_pre, aes(x = date, y = unemployment_rate)) +
+  geom_line(color = "purple", size = 1) +
+  labs(
+    title = "Pre-QE Unemployment Rate",
+    x = "Year",
+    y = "Unemployment Rate (%)"
+  ) +
+  theme_minimal()
+
+#Post-QE unemployment rate
+ggplot(data_post, aes(x = date, y = unemployment_rate)) +
+  geom_line(color = "purple", size = 1) +
+  geom_vline(xintercept = as.Date("2008-11-01"), linetype = "dashed", color = "red", size = 0.8) +
+  geom_vline(xintercept = as.Date("2010-11-03"), linetype = "dashed", color = "blue", size = 0.8) +
+  geom_vline(xintercept = as.Date("2012-09-13"), linetype = "dashed", color = "green", size = 0.8) +
+  annotate("text", x = as.Date("2008-11-01"), y = max(data_post$unemployment_rate, na.rm = TRUE), label = "QE1", color = "red", angle = 90, vjust = -0.5) +
+  annotate("text", x = as.Date("2010-11-03"), y = max(data_post$unemployment_rate, na.rm = TRUE), label = "QE2", color = "blue", angle = 90, vjust = -0.5) +
+  annotate("text", x = as.Date("2012-09-13"), y = max(data_post$unemployment_rate, na.rm = TRUE), label = "QE3", color = "green", angle = 90, vjust = -0.5) +
+  labs(
+    title = "Post-QE Unemployment Rate",
+    x = "Year",
+    y = "Unemployment Rate (%)"
+  ) +
+  theme_minimal()
+
+```
+
+### Unemployment Rate Analysis:
+
+#### Pre-QE Graph:
+
+Unemployment rates exhibit cyclical patterns from 1998 to 2008. After a decline in the early 2000s, unemployment increases again leading into the financial crisis.
+
+### Post-QE Graph:
+
+Unemployment rates peak during the financial crisis and sharply decline post-2009, coinciding with QE1 and subsequent economic recovery efforts.
+
+#### Comparison:
+
+The pre-QE period reflects typical cyclical trends in unemployment, whereas the post-QE period shows a significant reduction in unemployment, aligning with QE measures aimed at stimulating economic activity. This suggests that QE played a role in supporting labor market recovery.
+
+------------------------------------------------------------------------
+
+### **Regression Analysis**
+
+#### **Money Supply Growth vs. Interest Rate Scatterplots**
+
+The following scatterplots display the relationship between money supply growth and interest rates across two periods: before (1998–2008) and after (2008–2018) the implementation of quantitative easing (QE). The x-axis represents money supply growth (as a percentage), and the y-axis represents the interest rate (as a percentage). Each plot includes a regression line to visualize the direction and strength of the relationship.
+
+```{r}
+# Pre-QE Scatter Plot
+ggplot(data_pre, aes(x = money_supply_growth, y = interest_rate)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Money Supply Growth vs Interest Rate (Pre-QE)", x = "Money Supply Growth (%)", y = "Interest Rate (%)")
+
+# Post-QE Scatter Plot
+ggplot(data_post, aes(x = money_supply_growth, y = interest_rate)) +
+  geom_point(color = "blue") +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Money Supply Growth vs Interest Rate (Post-QE)", x = "Money Supply Growth (%)", y = "Interest Rate (%)")
+
+```
+
+#### Analysis:
+
+#### Pre-QE Graph:
+
+In the pre-QE period, there is a slight positive trend in the relationship between money supply growth and interest rates. The regression line's shallow upward slope suggests a weak correlation, implying that changes in the money supply were not strongly associated with interest rates during this period.
+
+#### Post-QE Graph:
+
+In the post-QE period, the relationship reverses, with a clear negative trend. The regression line slopes downward, indicating that higher money supply growth correlates with lower interest rates. This is consistent with the Federal Reserve’s policy of maintaining low interest rates through QE.
+
+#### Comparison:
+
+Before QE, the relationship between money supply growth and interest rates was weak and positive, while after QE, it became stronger and negative. This shift reflects the Federal Reserve’s direct intervention in controlling interest rates through monetary expansion during the QE period. Next, lets take a look at a regression analysis of each time period in order to better gauge the impact of QE on the economy.
+
+------------------------------------------------------------------------
+
+## **Regression Analysis of Real GDP Growth:**
+
+The following regression analysis explore the relationship between real GDP growth (dependent variable) and two predictors: money supply growth and interest rate, across two distinct periods—pre-QE (1998–2008) and post-QE (2008–2018). This analysis assesses how these predictors influenced GDP growth before and after the implementation of quantitative easing.
+
+```{r}
+# Pre-QE Regression
+model_pre <- lm(real_gdp_growth ~ money_supply_growth + interest_rate, data = data_pre)
+summary(model_pre)
+
+# Post-QE Regression
+model_post <- lm(real_gdp_growth ~ money_supply_growth + interest_rate, data = data_post)
+summary(model_post)
+
+```
+
+#### Pre-QE Regression:
+
+The regression results indicate that neither money supply growth nor interest rates had a statistically significant impact on GDP growth during the pre-QE period (p-values \> 0.05). The R-squared value is 0.01792, indicating that the predictors explain less than 2% of the variation in GDP growth. **Conclusion:** The model suggests that GDP growth was largely independent of money supply growth and interest rates in the pre-QE period, reflecting limited direct influence from these variables.
+
+#### Post-QE Regression:
+
+In the post-QE period, the results show a statistically significant negative relationship between money supply growth and GDP growth (p-value = 0.039). Interest rates remain statistically insignificant, with a p-value greater than 0.05. The R-squared value increases slightly to 0.1162, indicating that the predictors explain approximately 11.6% of the variation in GDP growth. **Conclusion:** Post-QE, money supply growth emerged as a more significant driver of GDP growth, with higher money supply growth associated with lower GDP growth. This reflects the Federal Reserve's expanded use of monetary policy tools during the QE era.
+
+#### Comparison:
+
+The pre-QE regression suggests that GDP growth was not significantly influenced by money supply growth or interest rates, while the post-QE regression highlights the growing importance of money supply growth as a factor. The post-QE model demonstrates slightly improved explanatory power, reflecting the greater influence of monetary policy during this period.
+
+------------------------------------------------------------------------
+
+## **Regression Diagnostic Plots**
+
+The following diagnostic plots evaluate the assumptions of the regression models, including linearity, normality of residuals, and homogeneity of variance, for the pre-QE and post-QE periods.
+
+```{r}
+# Pre-QE Diagnostic Plots
+par(mfrow = c(2, 2))
+plot(model_pre)
+
+```
+
+## Pre-QE Diagnostics:
+
+The residuals vs. fitted plot shows no discernible pattern, suggesting that the linearity assumption is met. The Q-Q plot indicates that residuals align closely with the theoretical quantiles, supporting the normality assumption. The scale-location plot demonstrates homogeneous variance in the residuals, confirming the homoscedasticity assumption. The residuals vs. leverage plot reveals no influential outliers or high-leverage points. **Conclusion:** The pre-QE regression model satisfies the key assumptions of linear regression, but its explanatory power remains very low.
+
+```{r}
+# Post-QE Diagnostic Plots
+par(mfrow = c(2, 2))
+plot(model_post)
+
+```
+
+## Post-QE Diagnostics:
+
+The residuals vs. fitted plot displays a tighter clustering of residuals around zero, indicating an improved model fit compared to the pre-QE period. The Q-Q plot suggests that residuals follow a normal distribution reasonably well, with no significant deviations. The scale-location plot confirms that residual variance is consistent, satisfying the homoscedasticity assumption. The residuals vs. leverage plot shows a few points with slightly higher leverage but no major concerns about influential outliers. **Conclusion:** The post-QE regression model adheres to the assumptions of linear regression and exhibits a better fit compared to the pre-QE model.
+
+## Comparison:
+
+Both the pre-QE and post-QE regression models meet the key assumptions of linear regression. However, the diagnostic plots for the post-QE period indicate a better model fit, with tighter residual clustering and slightly improved adherence to assumptions. This aligns with the stronger relationships observed in the post-QE regression results.
+
+------------------------------------------------------------------------
+
+## **Solow-Swam Growth Model**
+
+This code chunk calculates average savings rates for Pre-QE, QE1, QE2, and QE3 periods, using monthly data to identify trends in savings behavior during Quantitative Easing (QE). This data is essential for modeling how changes in savings rates influence economic outcomes in the Solow-Swan framework.
+
+```{r}
+# Load necessary library
+library(dplyr)
+
+# Create a data frame of savings rate data
+savings_rate_data <- data.frame(
+  date = seq(as.Date("2005-01-01"), as.Date("2014-12-01"), by = "month"),
+  savings_rate = c(
+    2.7, 2.3, 2.5, 2.1, 2.6, 2.0, 1.4, 2.0, 2.0, 2.3, 2.6, 2.5, 
+    3.0, 3.2, 3.3, 3.1, 2.9, 2.9, 2.3, 2.5, 2.4, 2.4, 2.7, 2.6, 
+    2.4, 2.8, 3.0, 3.0, 2.8, 2.7, 2.6, 2.2, 2.3, 2.2, 1.9, 2.4, 
+    2.6, 3.0, 2.9, 2.4, 6.8, 4.6, 3.6, 3.1, 3.9, 4.9, 6.0, 5.8, 
+    5.9, 5.4, 5.8, 6.5, 7.8, 6.1, 5.4, 4.4, 5.5, 5.1, 5.5, 5.4, 
+    5.6, 5.3, 5.3, 6.0, 6.4, 6.2, 6.1, 6.2, 6.1, 5.9, 5.8, 6.2, 
+    6.6, 6.9, 6.3, 6.3, 6.3, 6.5, 6.7, 6.7, 6.4, 6.3, 6.4, 7.2, 
+    7.4, 7.3, 7.6, 7.9, 7.9, 7.9, 7.0, 6.7, 7.2, 7.8, 8.7, 10.9, 
+    4.9, 4.7, 4.8, 5.1, 5.3, 5.4, 5.2, 5.2, 5.3, 4.7, 4.5, 4.5, 
+    5.2, 5.3, 5.2, 5.4, 5.6, 5.6, 5.5, 5.3, 5.5, 5.4, 5.6, 6.0
+  )
+)
+
+# Define time periods
+pre_qe_period <- as.Date(c("2005-01-01", "2007-12-31"))
+qe1_period <- as.Date(c("2008-01-01", "2010-12-31"))
+qe2_period <- as.Date(c("2011-01-01", "2011-12-31"))
+qe3_period <- as.Date(c("2012-01-01", "2014-12-31"))
+
+# Calculate average savings rates for each period
+average_savings_rates <- savings_rate_data %>%
+  mutate(period = case_when(
+    date >= pre_qe_period[1] & date <= pre_qe_period[2] ~ "Pre-QE",
+    date >= qe1_period[1] & date <= qe1_period[2] ~ "QE1",
+    date >= qe2_period[1] & date <= qe2_period[2] ~ "QE2",
+    date >= qe3_period[1] & date <= qe3_period[2] ~ "QE3",
+    TRUE ~ "Other"
+  )) %>%
+  filter(period != "Other") %>%
+  group_by(period) %>%
+  summarize(average_savings_rate = mean(savings_rate))
+
+# Display the results
+print(average_savings_rates)
+
+```
+
+This code chunk applies the Solow-Swan growth model, assuming that only the savings rate varies across QE phases while other parameters, such as capital elasticity and population growth rate, remain constant. By plotting the change in capital per worker (dr/dt) against capital per worker (K/L), the model examines the impact of QE-induced changes in savings rates on the steady-state equilibrium.
+
+```{r}
+# Solow model function
+solow_model <- function (s, n, r, a) {
+  drdt <- s * r^a - n * r
+  return(drdt)
+}
+
+# Parameters
+a <- 1/3                # Capital elasticity in production function
+n <- 0.02               # Population growth rate
+r <- seq(0, 8, by = 0.1) # Limit x-axis range to 0 to 8
+
+# Savings rates for Pre-QE, QE1, QE2, QE3
+qe_savings <- c(2.516667, 5.263889, 6.55, 6.097222) # Savings rates for each phase
+colors <- c("blue", "green", "orange", "red")
+
+# Pre-calculate dr/dt values to find the range
+drdt_values <- sapply(qe_savings, function(s) solow_model(s / 100, n, r, a))
+y_min <- min(drdt_values)
+y_max <- max(drdt_values)
+
+# Plot different trajectories of dr/dt for each QE phase
+plot(NULL, xlim = c(0, 8), ylim = c(y_min, y_max), xlab = "Capital per Worker (K/L)", 
+     ylab = "Change in Capital per Worker (dr/dt)", 
+     main = "Impact of QE on Solow Model (Steady States)")
+
+for (i in seq_along(qe_savings)) {
+  s <- qe_savings[i]
+  drdt <- solow_model(s / 100, n, r, a) # Divide by 100 to convert percentages
+  lines(r, drdt, col = colors[i])
+}
+
+# Add equilibrium line
+abline(h = 0, col = "black", lty = 2) # The horizontal line represents the steady-state equilibrium
+
+# Add legend
+legend("topright", legend = c("Pre-QE", "QE1", "QE2", "QE3"), col = colors, lty = 1)
+
+```
+
+# Interpretation of the Graph
+
+The graph shows how different savings rates during the QE phases affect capital accumulation. Higher savings rates, as seen in QE1, QE2, and QE3, shift the steady-state equilibrium upward, indicating more capital per worker at equilibrium. The assumption that only savings rates change highlights how QE policies promote capital accumulation, but the diminishing returns at higher capital levels underscore the limits of growth within the model. The horizontal line (dr/dt=0) represents the steady-state, where capital accumulation balances with depreciation
+
+## Calulating Average Decrease in GDP 2008-2009
+
+```{r}
+# Filter data for 2008 and 2009
+gdp_2008 <- data_post %>% filter(format(date, "%Y") == "2008") %>% summarise(avg_gdp = mean(gdp, na.rm = TRUE)) %>% pull(avg_gdp)
+gdp_2009 <- data_post %>% filter(format(date, "%Y") == "2009") %>% summarise(avg_gdp = mean(gdp, na.rm = TRUE)) %>% pull(avg_gdp)
+
+# Calculate the percentage decrease
+if (!is.na(gdp_2008) && !is.na(gdp_2009) && gdp_2008 > 0) {
+  percent_decrease <- ((gdp_2008 - gdp_2009) / gdp_2008) * 100
+  print(paste("The percentage decrease in GDP from 2008 to 2009 is:", round(percent_decrease, 2), "%"))
+} else {
+  print("Data for 2008 or 2009 is missing or incomplete.")
+}
+
+
+```

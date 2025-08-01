@@ -10,6 +10,10 @@ website:
         text: Home
       - href: about.qmd
         text: About
+      - text: "Economics Projects/Papers"
+        menu: 
+          - text: "Macro Theory Final: Impact of Quanitative Easing during 2008 Financial Crisis"
+            href: Macrotheory_Final_R_copy.html
       - text: "Foundations of Data Science in R Projects"
         menu: 
          - text: "Lisa's Vegetable Garden"
