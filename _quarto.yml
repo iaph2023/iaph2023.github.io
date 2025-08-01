@@ -10,7 +10,7 @@ website:
         text: Home
       - href: about.qmd
         text: About
-      - text: "Data Viz"
+      - text: "Foundations of Data Science in R Projects"
         menu: 
          - text: "Lisa's Vegetable Garden"
            href: Lisa_Vegetable_garden.html
@@ -22,10 +22,6 @@ website:
            href: MiniProject3.html
          - text: "SQL Analysis of WAI Database"
            href: Project4_SQL.html
-      - text: "Presentations"
-        menu: 
-          - text: "Data Science Projects Presentation"
-            href: "DS_Presentation.html"
       
 
 format:
